@@ -1,0 +1,11 @@
+# Dockerfile.server
+FROM gcc:12
+
+WORKDIR /app
+COPY server_multi_adv.c /app
+COPY helper.* /app
+
+RUN gcc server_multi_adv.c helper.c -o server -lpthread
+
+EXPOSE 8080
+CMD ["./server"]

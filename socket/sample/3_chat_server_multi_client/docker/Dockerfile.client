@@ -1,0 +1,10 @@
+# Dockerfile.client
+FROM gcc:12
+
+WORKDIR /app
+COPY chat_client.c /app
+COPY helper.* /app
+
+RUN gcc chat_client.c helper.c -o client -lpthread
+
+CMD ["./client", "SERVER_IP", "8080"]
