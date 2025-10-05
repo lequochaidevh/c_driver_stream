@@ -19,14 +19,14 @@ int main(int argc, char *argv[]) {
 
     GString *pipeline_str = g_string_new(
         "v4l2src device=/dev/video0 ! "
-        "image/jpeg,width=1280,height=720 ! "
+        "image/jpeg,width=640,height=480 ! "
         "jpegparse ! rtpjpegpay ! tee name=split_stream ");
 
     // bind udpsink with multi port
     for (int i = 1; i < argc; i++) {
         g_string_append_printf(
             pipeline_str,
-            "split_stream. ! queue ! udpsink host=127.0.0.1 port=%s ",
+            "split_stream. ! queue max-size-buffers=1 leaky=2 ! udpsink host=127.0.0.1 port=%s ",
             argv[i]);
 
             g_print("Streaming to %s at port %s ...\n", "127.0.0.1", argv[i]);
