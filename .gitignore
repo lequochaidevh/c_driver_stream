@@ -1,0 +1,13 @@
+build/
+vendor_build/
+*.cflags
+*.config
+*.creator
+*.creator.user
+*.cxxflags
+*.files
+*.includes
+*.creator.user
+tmp/
+test*
+.vscode
