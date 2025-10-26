@@ -2,6 +2,7 @@
 #include "exprtk.hpp"
 #include <functional>
 #include <string>
+#include <iostream>
 
 class ExprEvaluator {
 public:
@@ -42,4 +43,20 @@ public:
         x_ = x;
         return expression_.value();
     }
+};
+
+class ExprEvaluator2D {
+public:
+    ExprEvaluator2D(const std::string &expr_str);
+
+    double eval(double x, double y) const;
+
+    bool valid() const;
+
+private:
+    mutable double x_, y_;
+    bool compiled_;
+    exprtk::symbol_table<double> sym_table_;
+    exprtk::expression<double> expression_;
+    exprtk::parser<double> parser_;
 };
