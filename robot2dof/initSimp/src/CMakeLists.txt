@@ -19,9 +19,18 @@ target_include_directories(glad PUBLIC
     $<INSTALL_INTERFACE:include/glad>
     $<INSTALL_INTERFACE:include/KHR>
 )
+file(GLOB WINDOW_SRC
+    "${CMAKE_SOURCE_DIR}/window/*.cpp"
+)
 # --- Robot2DOF App ---
 add_executable(robot2dof
-    src/main.cpp
+    application.cpp
+    ${WINDOW_SRC}
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/window>
+    $<INSTALL_INTERFACE:include/robot2dof>
 )
 
 # --- Link ---
