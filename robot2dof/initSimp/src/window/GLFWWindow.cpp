@@ -42,9 +42,9 @@ GLFWWindow::GLFWWindow(const WindowConfigure_t mConfig)
             glfwGetCursorPos(win, &mx, &my);
             glfwGetWindowSize(win, &w, &h);
             // Map to world coordinates, matching your glOrtho(-s, s, -s, s, -1, 1)
-            double s = 1.2; // same as in your render()
+            double s = 1.2; // same as in your render() // calib possiton with mouse
             double wx = ((mx / w) * 2.0 - 1.0) * s;
-            double wy = (1.0 - (my / h) * 2.0) * s; // [-1,1] (lật trục Y)
+            double wy = (1.0 - (my / h) * 2.0) * s; // [-1,1] (mirror Y axist)
             self->mouseClickCallback(wx, wy); });
 
     printf("[GLFW] Created window %dx%d: %s\n", mConfig.width, mConfig.height, mConfig.title.c_str());

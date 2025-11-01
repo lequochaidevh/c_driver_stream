@@ -26,11 +26,7 @@ int main(){
 
     WindowConfigure_t cfg{"Robot2DOF Sim", 800, 800};
     auto window = NativeWindow::Create(EWindowSpec::GLFW, cfg);
-
     GCodeParser parser;
-    gcodeCmds = \
-        parser.Parse("/home/devh/linux_std/c_driver_stream/robot2dof/initSimp/src/gcode/demo.gcode");
-
     // ---------- callbacks ----------
     window->SetKeyCallback([](int key, int action) {
         if (action != KEY_PRESS) return;
@@ -98,6 +94,11 @@ int main(){
             if (execThread.joinable()) execThread.join();
             thread_done = false;
             execThread = std::thread([&]() {
+                gcodeCmds = \
+                    parser.Parse(\
+                        "/home/devh/linux_std/c_driver_stream/"
+                        "robot2dof/initSimp/src/gcode/demo.gcode"
+                    );
                 ExecuteGCodeStep(robot, gcodeCmds, 0.07);
                 thread_done = true;
                 flag_impl = 0; // NOTE: use printf to debug
@@ -162,9 +163,10 @@ int main(){
         window->SwapBuffers();
         window->PollEvents();
         
-        if(flag_impl == 3 && execThread.joinable()) {
+        if(flag_impl != 1 && execThread.joinable()) {
             execThread.join();
         }
     }
+    if(execThread.joinable()) { execThread.join(); }
     return 0;
 }
