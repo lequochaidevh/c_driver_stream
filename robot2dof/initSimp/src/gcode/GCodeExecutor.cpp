@@ -1,5 +1,5 @@
 #include "GCodeCommand.h"
-#include "../application.h"   // để có Robot2DOF
+#include "../application.h"   // Robot2DOF
 #include <cmath>
 #include <iostream>
 #include <thread>
@@ -13,6 +13,7 @@ void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, d
 {
     for (auto& cmd : cmds)
     {
+        if (flag_impl.load() != 1) break;
         if (cmd.type == "G0" || cmd.type == "G1") {
             moveLinear(robot, cmd.x, cmd.y, cmd.feedrate, dt);
         }
@@ -46,8 +47,9 @@ static void moveLinear(Robot2DOF& robot, double targetX, double targetY, double 
     if (dist < 1e-8) return;
 
     int steps = std::max(1, (int)(dist / (feedrate * dt)));
-    
+
     for (int i = 1; i <= steps; i++) {
+        if(flag_impl.load() != 1) return;
         double ratio = (double)i / steps;
         double nx = x0 + ratio * dx;
         double ny = y0 + ratio * dy;
@@ -76,6 +78,7 @@ static void moveArcCCW(Robot2DOF& robot, double cx, double cy, double tx, double
     int steps = std::max(1, (int)(arcLength / (feedrate * dt)));
     
     for (int i = 1; i <= steps; i++) {
+        if(flag_impl.load() != 1) return;
         double theta = startAngle + (endAngle - startAngle) * ((double)i / steps);
         double nx = cx + r * std::cos(theta);
         double ny = cy + r * std::sin(theta);
@@ -84,9 +87,14 @@ static void moveArcCCW(Robot2DOF& robot, double cx, double cy, double tx, double
     }
 }
 
-// Spause G4 P[t]
+// pause G4 P[t]
 static void dwell(double seconds)
 {
     std::cout << "Dwell for " << seconds << " s" << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds((int)(seconds * 1000)));
+    uint8_t split_time_to_check = 100;
+    seconds *= split_time_to_check;
+    for(int i = 0; i < seconds; i++) {
+        if(flag_impl.load() != 1) return;
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(seconds * (1000/split_time_to_check))));
+    }
 }

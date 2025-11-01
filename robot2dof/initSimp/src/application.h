@@ -5,6 +5,13 @@
 #include <vector>
 #include <optional>
 #include <algorithm>
+
+#include <thread>
+#include <atomic>
+#include <mutex>
+
+#include "gcode/GCodeParser.h"
+#include "gcode/GCodeCommand.h"
 // ---------- Small math helpers ----------
 struct Vec2 {
     double x=0, y=0;
@@ -52,7 +59,7 @@ public:
         UpdatePosition();
     }
 
-    // --- Cập nhật mx, my dựa trên theta1, theta2 ---
+    // --- Update mx, my base on theta1, theta2 ---
     void UpdatePosition() {
         mx = l1 * cos(theta1) + l2 * cos(theta1 + theta2);
         my = l1 * sin(theta1) + l2 * sin(theta1 + theta2);
@@ -134,7 +141,17 @@ public:
         double sin_t2 = sqrt(1 - cos_t2*cos_t2);
         theta2 = atan2(sin_t2, cos_t2);
         theta1 = atan2(y, x) - atan2(l2*sin_t2, l1 + l2*cos_t2);
-        UpdatePosition(); // 🔥 cập nhật lại mx, my
+        UpdatePosition(); // Update mx, my
     }
 
 };
+
+
+
+
+// ---------- Globals for simple app ----------
+static Robot2DOF robot(0.5, 0.5);
+static bool render_enabled = true;
+static double time_acc = 0.0;
+static bool show_target = false;
+extern std::atomic<uint8_t> flag_impl; // 1: gcode; 2: manual

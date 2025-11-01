@@ -16,7 +16,7 @@ std::vector<GCodeCommand> GCodeParser::Parse(const std::string& path) {
     while (std::getline(f, line)) {
         if (line.empty()) continue;
 
-        // Bỏ comment sau dấu ';' hoặc '('
+        // Ignore Gcode line with comment: ';' or '('
         size_t commentPos = line.find_first_of(";(");
         if (commentPos != std::string::npos)
             line = line.substr(0, commentPos);
@@ -25,12 +25,12 @@ std::vector<GCodeCommand> GCodeParser::Parse(const std::string& path) {
         std::string token;
         GCodeCommand cmd;
 
-        // Token đầu tiên: lệnh G-code (G0, G1, G3, G4,...)
+        // First token G-code (G0, G1, G3, G4,...)
         iss >> token;
         if (token.empty()) continue;
         cmd.type = token;  // G0, G1, G2, G3, G4...
 
-        // Các tham số còn lại: X, Y, I, J, F, P...
+        // Param: X, Y, I, J, F, P...
         while (iss >> token) {
             if (token.size() < 2) continue;
             char c = token[0];
@@ -39,10 +39,10 @@ std::vector<GCodeCommand> GCodeParser::Parse(const std::string& path) {
             switch (c) {
                 case 'X': cmd.x = val; break;
                 case 'Y': cmd.y = val; break;
-                case 'I': cmd.i = val; break; // offset cho G3/G2
+                case 'I': cmd.i = val; break; // offset for G3/G2
                 case 'J': cmd.j = val; break;
-                case 'F': cmd.feedrate = val; break; // tốc độ
-                case 'P': cmd.dwellTime = val; break; // thời gian dừng G4
+                case 'F': cmd.feedrate = val; break; // speed
+                case 'P': cmd.dwellTime = val; break; // Time spause at G4
                 default: break;
             }
         }
@@ -50,5 +50,6 @@ std::vector<GCodeCommand> GCodeParser::Parse(const std::string& path) {
         cmds.push_back(cmd);
     }
 
+    f.close();
     return cmds;
 }

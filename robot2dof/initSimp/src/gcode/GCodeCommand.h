@@ -10,7 +10,7 @@ struct GCodeCommand {
     double x = 0;
     double y = 0;
     double f = 1.0; // feedrate (speed)
-    double i = 0.0;     // offset X fỏ G3/G2 (if need)
+    double i = 0.0;     // offset X for G3/G2 (if need)
     double j = 0.0;     // offset Y for G3/G2
     double feedrate = 100.0; // speed mm/s
     double dwellTime = 0.0;  // G4

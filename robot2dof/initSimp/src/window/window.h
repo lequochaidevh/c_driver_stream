@@ -21,7 +21,6 @@ typedef struct WindowConfigure {
     uint32_t width, height;
 } WindowConfigure_t;
 
-
 class NativeWindow {
 public:
     virtual ~NativeWindow() = default;
