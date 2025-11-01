@@ -2,6 +2,7 @@
 #include "application.h"
 #include "window/window.h"
 #include <thread>
+#include <atomic>
 
 #include "gcode/GCodeParser.h"
 #include "gcode/GCodeCommand.h"
@@ -18,7 +19,7 @@ static bool sim_enabled = false;
 static double time_acc = 0.0;
 static double target_x = 0.6, target_y = 0.0;
 static bool show_target = false;
-
+static uint8_t flag_impl = 1; // 1: gcode; 2: manual
 // ---------- Main ----------
 int main(){
     std::cout << "__cplusplus = " << __cplusplus << std::endl;
@@ -47,7 +48,13 @@ int main(){
             case KEY_2: robot.theta1 -= 0.1; break;
             case KEY_3: robot.theta2 += 0.1; break;
             case KEY_4: robot.theta2 -= 0.1; break;
+            case KEY_G: {
+                flag_impl = 1;
+                printf("flag_impl=%d\n", flag_impl);
+                break;
+            }
             case KEY_I: {
+                flag_impl = 2;
                 auto sols = robot.inverseKinematics(target_x, target_y);
                 if (!sols.empty()) {
                     target_theta1 = sols[0].theta1;
@@ -70,10 +77,9 @@ int main(){
     });
 
     // ---------- Simulation loop ----------
+    std::thread execThread;
+    std::atomic<bool> thread_done{true}; 
 
-    std::thread execThread([&]() {
-        ExecuteGCodeStep(robot, gcodeCmds, 0.07);
-    });
     double lastt = window->GetTime();
     while (!window->ShouldClose()) {
         double now = window->GetTime();
@@ -81,10 +87,21 @@ int main(){
         lastt = now;
         if (sim_enabled) {
             time_acc += dt;
-            
-            // double alpha = 1.0 - exp(-4.0 * dt); //speed
-            // robot.theta1 += alpha * (target_theta1 - robot.theta1);
-            // robot.theta2 += alpha * (target_theta2 - robot.theta2);
+            if(flag_impl == 2) {
+                double alpha = 1.0 - exp(-4.0 * dt); //speed
+                robot.theta1 += alpha * (target_theta1 - robot.theta1);
+                robot.theta2 += alpha * (target_theta2 - robot.theta2);
+                robot.UpdatePosition();
+            }
+        }
+        if(flag_impl == 1 && thread_done.load()) {
+            if (execThread.joinable()) execThread.join();
+            thread_done = false;
+            execThread = std::thread([&]() {
+                ExecuteGCodeStep(robot, gcodeCmds, 0.07);
+                thread_done = true;
+                flag_impl = 0; // NOTE: use printf to debug
+            });
         }
 
         // --- Clear screen ---
@@ -144,7 +161,10 @@ int main(){
 
         window->SwapBuffers();
         window->PollEvents();
+        
+        if(flag_impl == 3 && execThread.joinable()) {
+            execThread.join();
+        }
     }
-    execThread.join();
     return 0;
 }

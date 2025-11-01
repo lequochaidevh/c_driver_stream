@@ -56,7 +56,7 @@ public:
     void UpdatePosition() {
         mx = l1 * cos(theta1) + l2 * cos(theta1 + theta2);
         my = l1 * sin(theta1) + l2 * sin(theta1 + theta2);
-        std::cout << "mX = " << mx << " ," << "mY = " << my << std::endl;
+        //std::cout << "mX = " << mx << " ," << "mY = " << my << std::endl;
     }
 
     // --- Forward kinematics ---

@@ -8,12 +8,10 @@ static void moveLinear(Robot2DOF& robot, double targetX, double targetY, double 
 static void moveArcCCW(Robot2DOF& robot, double cx, double cy, double targetX, double targetY, double feedrate, double dt);
 static void dwell(double seconds);
 
-static int currentCmd = 0;
-
 // Thực thi toàn bộ chuỗi lệnh G-code
 void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, double dt)
 {
-    if (currentCmd >= cmds.size()) return;
+    // std::cout << "Excute called" << std::endl;
     for (auto& cmd : cmds)
     {
         if (cmd.type == "G0" || cmd.type == "G1") {
@@ -33,7 +31,6 @@ void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, d
             break;
         }
     }
-    currentCmd++;
 }
 
 // ======== HÀM PHỤ TRỢ ========
