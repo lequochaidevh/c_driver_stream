@@ -21,6 +21,7 @@ target_include_directories(glad PUBLIC
 )
 file(GLOB WINDOW_SRC
     "${CMAKE_SOURCE_DIR}/window/*.cpp"
+    "${CMAKE_SOURCE_DIR}/gcode/*.cpp"
 )
 # --- Robot2DOF App ---
 add_executable(robot2dof
@@ -30,6 +31,7 @@ add_executable(robot2dof
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/window>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gcode>
     $<INSTALL_INTERFACE:include/robot2dof>
 )
 

@@ -1,0 +1,6 @@
+; Simple square path
+G0 X0 Y0 F1
+G1 X0.5 Y0 F0.5
+G1 X0.5 Y0.5 F0.5
+G1 X0 Y0.5 F0.5
+G1 X0 Y0 F0.5
