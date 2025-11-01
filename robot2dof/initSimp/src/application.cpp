@@ -1,6 +1,7 @@
 
 #include "application.h"
 #include "window/window.h"
+#include <thread>
 
 #include "gcode/GCodeParser.h"
 #include "gcode/GCodeCommand.h"
@@ -11,7 +12,7 @@ double target_theta2 = 0.0;
 
 
 // ---------- Globals for simple app ----------
-static Robot2DOF robot(0.6, 0.4);
+static Robot2DOF robot(0.5, 0.5);
 static bool render_enabled = true;
 static bool sim_enabled = false;
 static double time_acc = 0.0;
@@ -20,7 +21,9 @@ static bool show_target = false;
 
 // ---------- Main ----------
 int main(){
-    WindowConfigure_t cfg{"Robot2DOF Sim", 800, 600};
+    std::cout << "__cplusplus = " << __cplusplus << std::endl;
+
+    WindowConfigure_t cfg{"Robot2DOF Sim", 800, 800};
     auto window = NativeWindow::Create(EWindowSpec::GLFW, cfg);
 
     GCodeParser parser;
@@ -67,23 +70,25 @@ int main(){
     });
 
     // ---------- Simulation loop ----------
+
+    std::thread execThread([&]() {
+        ExecuteGCodeStep(robot, gcodeCmds, 0.07);
+    });
     double lastt = window->GetTime();
     while (!window->ShouldClose()) {
         double now = window->GetTime();
         double dt = now - lastt;
         lastt = now;
-        ExecuteGCodeStep(robot, gcodeCmds, dt);
         if (sim_enabled) {
             time_acc += dt;
-            // 
+            
             // double alpha = 1.0 - exp(-4.0 * dt); //speed
             // robot.theta1 += alpha * (target_theta1 - robot.theta1);
             // robot.theta2 += alpha * (target_theta2 - robot.theta2);
-            ExecuteGCodeStep(robot, gcodeCmds, dt);
         }
 
         // --- Clear screen ---
-        glViewport(0, 0, 800, 600);
+        glViewport(0, 0, 800, 800);
         glClearColor(0.95f, 0.95f, 0.95f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -140,6 +145,6 @@ int main(){
         window->SwapBuffers();
         window->PollEvents();
     }
-
+    execThread.join();
     return 0;
 }

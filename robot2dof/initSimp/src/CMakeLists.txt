@@ -37,7 +37,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 # --- Link ---
 target_link_libraries(robot2dof PRIVATE glfw glad)
-
+find_package(Threads REQUIRED)
+target_link_libraries(robot2dof PRIVATE Threads::Threads)
 # --- OpenGL ---
 if(UNIX)
     find_package(OpenGL REQUIRED)

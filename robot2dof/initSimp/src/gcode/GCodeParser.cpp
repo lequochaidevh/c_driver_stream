@@ -2,37 +2,53 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cstdlib>
 
 std::vector<GCodeCommand> GCodeParser::Parse(const std::string& path) {
     std::vector<GCodeCommand> cmds;
     std::ifstream f(path);
-    if(!f.is_open()){
+    if (!f.is_open()) {
         std::cerr << "Cannot open GCode file: " << path << std::endl;
         return cmds;
     }
 
     std::string line;
-    while(std::getline(f, line)) {
-        if(line.empty() || line[0] == ';') continue; // comment
+    while (std::getline(f, line)) {
+        if (line.empty()) continue;
+
+        // Bỏ comment sau dấu ';' hoặc '('
+        size_t commentPos = line.find_first_of(";(");
+        if (commentPos != std::string::npos)
+            line = line.substr(0, commentPos);
 
         std::istringstream iss(line);
         std::string token;
         GCodeCommand cmd;
 
+        // Token đầu tiên: lệnh G-code (G0, G1, G3, G4,...)
         iss >> token;
-        if(token == "G0") cmd.type = GCodeType::G0;
-        else if(token == "G1") cmd.type = GCodeType::G1;
-        else cmd.type = GCodeType::Unknown;
+        if (token.empty()) continue;
+        cmd.type = token;  // G0, G1, G2, G3, G4...
 
-        while(iss >> token) {
+        // Các tham số còn lại: X, Y, I, J, F, P...
+        while (iss >> token) {
+            if (token.size() < 2) continue;
             char c = token[0];
             double val = atof(token.substr(1).c_str());
-            if(c == 'X') cmd.x = val;
-            else if(c == 'Y') cmd.y = val;
-            else if(c == 'F') cmd.f = val;
+
+            switch (c) {
+                case 'X': cmd.x = val; break;
+                case 'Y': cmd.y = val; break;
+                case 'I': cmd.i = val; break; // offset cho G3/G2
+                case 'J': cmd.j = val; break;
+                case 'F': cmd.feedrate = val; break; // tốc độ
+                case 'P': cmd.dwellTime = val; break; // thời gian dừng G4
+                default: break;
+            }
         }
 
         cmds.push_back(cmd);
     }
+
     return cmds;
 }
