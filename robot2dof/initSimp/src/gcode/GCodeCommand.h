@@ -14,6 +14,9 @@ struct GCodeCommand {
     double j = 0.0;     // offset Y for G3/G2
     double feedrate = 100.0; // speed mm/s
     double dwellTime = 0.0;  // G4
+
+    bool hasX = true;
+    bool hasY = true;
 };
 
 void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, double dt);

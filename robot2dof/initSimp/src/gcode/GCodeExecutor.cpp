@@ -8,6 +8,7 @@ static void moveLinear(Robot2DOF& robot, double targetX, double targetY, double 
 static void moveArcCW(Robot2DOF& robot, double cx, double cy, double targetX, double targetY, double feedrate, double dt);
 static void moveArcCCW(Robot2DOF& robot, double cx, double cy, double targetX, double targetY, double feedrate, double dt);
 static void dwell(double seconds);
+static bool absoluteMode = true;
 
 // Execute G-code every line
 void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, double dt)
@@ -16,17 +17,47 @@ void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, d
     {
         if (flag_impl.load() != 1) break;
         if (cmd.type == "G0" || cmd.type == "G1") {
-            moveLinear(robot, cmd.x, cmd.y, cmd.feedrate, dt);
+            double tx = cmd.x;
+            double ty = cmd.y;
+            if (absoluteMode) {
+                tx += (robot.offsetX * 100); // offset = 0 or offset of G92
+                ty += (robot.offsetY * 100);
+                printf("tx = %f, ty = %f \n", tx, ty);
+            } else {
+                tx += (robot.GetCurrentX_Machine() * 100); // G91
+                ty += (robot.GetCurrentY_Machine() * 100);
+            }
+            moveLinear(robot, tx, ty, cmd.feedrate, dt);
         }
-        else if (cmd.type == "G2") {
-            double cx = cmd.x - cmd.i;
-            double cy = cmd.y - cmd.j;
-            moveArcCW(robot, cx, cy, cmd.x, cmd.y, cmd.feedrate, dt);
-        }
-        else if (cmd.type == "G3") {
-            double cx = cmd.x - cmd.i;
-            double cy = cmd.y - cmd.j;
-            moveArcCCW(robot, cx, cy, cmd.x, cmd.y, cmd.feedrate, dt);
+        else if (cmd.type == "G2" || cmd.type == "G3") {
+            double tx = cmd.x;
+            double ty = cmd.y;
+            double ci = cmd.i;
+            double cj = cmd.j;
+
+            // --- G90/G91 ---
+            if (absoluteMode) {
+                tx += (robot.offsetX * 100); // offset of G92
+                ty += (robot.offsetY * 100);
+            } else {
+                tx += robot.GetCurrentX_Machine() * 100;
+                ty += robot.GetCurrentY_Machine() * 100;
+            }
+
+            // --- Sol center of circle (I,J) ---
+            // In G-code, I,J are vector from *start point* to *center of bow*
+            double cx = (robot.GetCurrentX_Machine() * 100) + ci;
+            double cy = (robot.GetCurrentY_Machine() * 100) + cj;
+
+            // --- execute ---
+            if (cmd.type == "G2") {
+                moveArcCW(robot, cx, cy, tx, ty, cmd.feedrate, dt);
+            } else {
+                moveArcCCW(robot, cx, cy, tx, ty, cmd.feedrate, dt);
+            }
+
+            printf("%s: target=(%.3f, %.3f) center=(%.3f, %.3f)\n",
+                cmd.type.c_str(), tx, ty, cx, cy);
         }
         else if (cmd.type == "G4") {
             dwell(cmd.dwellTime);
@@ -35,6 +66,20 @@ void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, d
             double homeX = HOME_X;
             double homeY = HOME_Y;
             moveLinear(robot, homeX, homeY, cmd.feedrate > 0 ? cmd.feedrate : 10.0, dt);
+        }
+        else if (cmd.type == "G90") {
+            absoluteMode = true;
+        }
+        else if (cmd.type == "G91") {
+            absoluteMode = false;
+        }
+        else if (cmd.type == "G92") {
+            double wx = cmd.hasX ? cmd.x : robot.GetCurrentX_Work();
+            double wy = cmd.hasY ? cmd.y : robot.GetCurrentY_Work();
+            robot.SetWorkOffset(wx, wy);
+            std::cout << "Work offset set (G92): now (" 
+                    << robot.GetCurrentX_Work() << ", " 
+                    << robot.GetCurrentY_Work() << ") = (0,0)\n";
         }
         else {
             std::cout << "Unknown G-code: " << cmd.type << std::endl;

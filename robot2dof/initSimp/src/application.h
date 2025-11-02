@@ -66,8 +66,10 @@ struct IKResult {
 class Robot2DOF {
 public:
     double l1, l2;
-    double theta1, theta2; // góc hiện tại (rad)
-    double mx, my;         // vị trí đầu tay (end-effector)
+    double theta1, theta2; // (rad)
+    double mx, my;         // arm-destination (end-effector)
+    double offsetX = 0.0;
+    double offsetY = 0.0;
 
     Robot2DOF(double _l1, double _l2)
         : l1(_l1), l2(_l2), theta1(0), theta2(0) {
@@ -137,6 +139,12 @@ public:
     double GetCurrentX() const { return mx; }
     double GetCurrentY() const { return my; }
 
+    double GetCurrentX_Work() const { return mx - offsetX; }
+    double GetCurrentY_Work() const { return my - offsetY; }
+
+    double GetCurrentX_Machine() const { return mx; }
+    double GetCurrentY_Machine() const { return my; }
+
     // --- robot move to Position (x, y) ---
     void MoveTo(double x, double y) {
         double d = sqrt(x*x + y*y);
@@ -160,6 +168,12 @@ public:
 
         // Save the path.
         pathPoints.emplace_back(x, y);
+    }
+    
+    void  SetWorkOffset(double wx, double wy) {
+        offsetX = mx - wx/100;
+        offsetY = my - wy/100;
+        printf("offsetX = %f, offsetY = %f \n", offsetX, offsetY);
     }
 
 };

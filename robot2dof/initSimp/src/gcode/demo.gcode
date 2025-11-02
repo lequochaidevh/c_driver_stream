@@ -1,21 +1,30 @@
-; Demo GCode
-; G0 X100 Y0 F15
-; G0 X45 Y25 F25
-; G1 X40 Y45 F50
-; G3 X41 Y45 I15 J15 F50
-; G0 X65 Y15 F75
-; G0 X45 Y35 F25
-; G1 X50 Y0 F10
-; G1 X35 Y35 F50
-; G3 X35 Y35 I-25 J30 F80
+
+; --- Return home ---
+G28            ; Return HOME_X, HOME_Y (always absolute)
+G1 X30 Y00 F50  ; Move
+G92 X0 Y10
+G90
+G1 X30 Y0 F30  ; Move
+G1 X30 Y20 F30  ; Move
+G28
+G92 X0 Y0
+
+; --- absolute ---
+; G90             ; Set absolute
+; G1 X30 Y50 F50  ; Move
+; G1 X60 Y10 F20  ; Move
+; G28
+; G92 X-100 Y0
+; G91             ; Set non-absolute
+; G1 X30 Y50 F50  ; Move duplicate
+; G1 X60 Y10 F20  ; Move
+; G28            ; Return HOME_X, HOME_Y (always absolute)
+; G92 X0 Y0
+; G90             ; Set absolute
 ; G1 X10 Y10 F70
-; G4 P0.5
-; G3 X10 Y10 I10 J10 F20
-; G4 P0.5
-; G3 X10 Y10 I10 J10 F80
-; G3 X10 Y10 I10 J10 F40
-; G4 P0.5
-G1 X50 Y30 F90
-G3 X50 Y30 I30 J30 F50
-G1 X-50 Y30 F90
-; G3 X50 Y30 I30 J30 F80
+; G3 X10 Y10 I10 J10 F70
+; G91             ; Set absolute
+; G1 X10 Y10 F70
+; G2 X0 Y0 I10 J10 F70
+; --- End ---
+; ======================
