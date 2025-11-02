@@ -12,6 +12,17 @@
 
 #include "gcode/GCodeParser.h"
 #include "gcode/GCodeCommand.h"
+
+// ---------- Globals for simple app ----------
+static bool render_enabled = true;
+static double time_acc = 0.0;
+static bool show_target = false;
+extern std::atomic<uint8_t> flag_impl; // 1: gcode; 2: manual
+//---
+
+extern std::vector<std::pair<double, double>> pathPoints;
+extern bool drawPath; // toggle by D Key
+
 // ---------- Small math helpers ----------
 struct Vec2 {
     double x=0, y=0;
@@ -118,11 +129,11 @@ public:
         return sols;
     }
 
-    // --- Getter vị trí ---
+    // --- Getter Position ---
     double GetCurrentX() const { return mx; }
     double GetCurrentY() const { return my; }
 
-    // --- Di chuyển robot tới vị trí (x, y) ---
+    // --- robot move to Position (x, y) ---
     void MoveTo(double x, double y) {
         double d = sqrt(x*x + y*y);
         if (d > l1 + l2 ) {
@@ -142,16 +153,11 @@ public:
         theta2 = atan2(sin_t2, cos_t2);
         theta1 = atan2(y, x) - atan2(l2*sin_t2, l1 + l2*cos_t2);
         UpdatePosition(); // Update mx, my
+
+        // Save the path.
+        pathPoints.emplace_back(x, y);
     }
 
 };
 
-
-
-
-// ---------- Globals for simple app ----------
 static Robot2DOF robot(0.5, 0.5);
-static bool render_enabled = true;
-static double time_acc = 0.0;
-static bool show_target = false;
-extern std::atomic<uint8_t> flag_impl; // 1: gcode; 2: manual

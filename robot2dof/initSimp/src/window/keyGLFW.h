@@ -7,5 +7,6 @@
 #define KEY_G GLFW_KEY_G
 #define KEY_I GLFW_KEY_I
 #define KEY_S GLFW_KEY_S
+#define KEY_D GLFW_KEY_D
 #define KEY_R GLFW_KEY_R
 #define KEY_PRESS GLFW_PRESS

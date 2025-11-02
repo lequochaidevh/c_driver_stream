@@ -10,7 +10,10 @@ double target_theta2 = 0.0;
 double target_x = 0.6, target_y = 0.0;
 
 std::atomic<uint8_t> flag_impl{1};
-static std::mutex mtx;
+// Draw path
+
+std::vector<std::pair<double, double>> pathPoints;
+bool drawPath = false; // toggle by D Key
 
 int main(){
     WindowConfigure_t cfg{"Robot2DOF Sim", 800, 800};
@@ -23,24 +26,30 @@ int main(){
         switch (key) {
             case KEY_R:
                 render_enabled = !render_enabled;
-                printf("render=%d\n", render_enabled);
+                printf("render = %d\n", render_enabled);
                 break;
             case KEY_S:
                 sim_enabled = !sim_enabled;
-                printf("sim=%d\n", sim_enabled);
+                printf("sim = %d\n", sim_enabled);
                 break;
             case KEY_1: robot.theta1 += 0.1; break;
             case KEY_2: robot.theta1 -= 0.1; break;
             case KEY_3: robot.theta2 += 0.1; break;
             case KEY_4: robot.theta2 -= 0.1; break;
+            case KEY_D: {
+                drawPath = !drawPath;
+                printf("drawPath = %d\n", drawPath);
+                break;
+            }
             case KEY_G: {
                 flag_impl.store(1);
-                printf("flag_impl.load()=%d\n", flag_impl.load());
+                printf("flag_impl.load() = %d\n", flag_impl.load());
+                pathPoints.clear();
                 break;
             }
             case KEY_I: {
                 flag_impl.store(2);
-                printf("flag_impl.load()=%d\n", flag_impl.load());
+                printf("flag_impl.load() = %d\n", flag_impl.load());
                 auto sols = robot.inverseKinematics(target_x, target_y);
                 if (!sols.empty()) {
                     target_theta1 = sols[0].theta1;
@@ -161,6 +170,15 @@ int main(){
             glColor3f(0.0f, 0.0f, 0.0f);
             window->DrawLine(p2.x, p2.y, p2.x + scale * J[0][0], p2.y + scale * J[1][0]);
             window->DrawLine(p2.x, p2.y, p2.x + scale * J[0][1], p2.y + scale * J[1][1]);
+
+            // Draw the path of Robot when Moveto() x y
+            if (drawPath && !pathPoints.empty()) {
+                glColor3f(0.1f, 0.8f, 0.1f); // green color
+                glBegin(GL_LINE_STRIP);
+                for (auto &p : pathPoints)
+                    glVertex2f(p.first, p.second);
+                glEnd();
+            }
         }
 
         window->SwapBuffers();
