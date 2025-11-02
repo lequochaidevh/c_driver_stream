@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 project(robot2dof)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -19,21 +19,39 @@ target_include_directories(glad PUBLIC
     $<INSTALL_INTERFACE:include/glad>
     $<INSTALL_INTERFACE:include/KHR>
 )
-file(GLOB WINDOW_SRC
+
+file(GLOB SOURCE_FILES_DIR
+    "${CMAKE_SOURCE_DIR}/robot/2DOF/*.cpp"
     "${CMAKE_SOURCE_DIR}/window/*.cpp"
     "${CMAKE_SOURCE_DIR}/gcode/*.cpp"
 )
 # --- Robot2DOF App ---
 add_executable(robot2dof
     application.cpp
-    ${WINDOW_SRC}
+    ${SOURCE_FILES_DIR}
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/base>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/robot/2DOF>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/window>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gcode>
     $<INSTALL_INTERFACE:include/robot2dof>
 )
+
+# Check CMake version
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
+    message(STATUS "CMake version >= 3.16 detected, enabling PCH")
+    target_precompile_headers(${PROJECT_NAME} PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}/base/pch.h"
+    )
+else()
+    message(STATUS "CMake version < 3.16 detected, skipping PCH")
+endif()
+        # TODO: Add to precompile header files
+        # "${VENDOR_ROOT}/x86_64_u20/include/glad/gl.h"
+        # "${VENDOR_ROOT}/x86_64_u20/include/KHR/khrplatform.h"
 
 # --- Link ---
 target_link_libraries(robot2dof PRIVATE glfw glad)
