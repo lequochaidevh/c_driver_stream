@@ -23,6 +23,10 @@ extern std::atomic<uint8_t> flag_impl; // 1: gcode; 2: manual
 extern std::vector<std::pair<double, double>> pathPoints;
 extern bool drawPath; // toggle by D Key
 
+// Pos
+#define HOME_X -100
+#define HOME_Y 0
+
 // ---------- Small math helpers ----------
 struct Vec2 {
     double x=0, y=0;

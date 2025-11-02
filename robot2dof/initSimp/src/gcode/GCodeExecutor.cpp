@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 static void moveLinear(Robot2DOF& robot, double targetX, double targetY, double feedrate, double dt);
+static void moveArcCW(Robot2DOF& robot, double cx, double cy, double targetX, double targetY, double feedrate, double dt);
 static void moveArcCCW(Robot2DOF& robot, double cx, double cy, double targetX, double targetY, double feedrate, double dt);
 static void dwell(double seconds);
 
@@ -17,6 +18,11 @@ void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, d
         if (cmd.type == "G0" || cmd.type == "G1") {
             moveLinear(robot, cmd.x, cmd.y, cmd.feedrate, dt);
         }
+        else if (cmd.type == "G2") {
+            double cx = cmd.x - cmd.i;
+            double cy = cmd.y - cmd.j;
+            moveArcCW(robot, cx, cy, cmd.x, cmd.y, cmd.feedrate, dt);
+        }
         else if (cmd.type == "G3") {
             double cx = cmd.x - cmd.i;
             double cy = cmd.y - cmd.j;
@@ -24,6 +30,11 @@ void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, d
         }
         else if (cmd.type == "G4") {
             dwell(cmd.dwellTime);
+        }
+        else if (cmd.type == "G28") {
+            double homeX = HOME_X;
+            double homeY = HOME_Y;
+            moveLinear(robot, homeX, homeY, cmd.feedrate > 0 ? cmd.feedrate : 10.0, dt);
         }
         else {
             std::cout << "Unknown G-code: " << cmd.type << std::endl;
@@ -53,6 +64,35 @@ static void moveLinear(Robot2DOF& robot, double targetX, double targetY, double 
         double ratio = (double)i / steps;
         double nx = x0 + ratio * dx;
         double ny = y0 + ratio * dy;
+        robot.MoveTo(nx, ny);
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(dt*1000)));
+    }
+}
+
+static void moveArcCW(Robot2DOF& robot, double cx, double cy, double tx, double ty, double feedrate, double dt)
+{
+    double x0 = robot.GetCurrentX();
+    double y0 = robot.GetCurrentY();
+    cx /= 100;
+    cy /= 100;
+    tx /= 100;
+    ty /= 100;
+    feedrate /= 100;
+
+    double r = std::sqrt((x0 - cx)*(x0 - cx) + (y0 - cy)*(y0 - cy));
+
+    double startAngle = std::atan2(y0 - cy, x0 - cx);
+    double endAngle   = std::atan2(ty - cy, tx - cx);
+    if (abs(endAngle - startAngle) <= 1e-8) endAngle -= 2*M_PI; //diff
+
+    double arcLength = r * std::fabs(endAngle - startAngle);
+    int steps = std::max(1, (int)(arcLength / (feedrate * dt)));
+
+    for (int i = 1; i <= steps; i++) {
+        if(flag_impl.load() != 1) return;
+        double theta = startAngle + (endAngle - startAngle) * ((double)i / steps);
+        double nx = cx + r * std::cos(theta);
+        double ny = cy + r * std::sin(theta);
         robot.MoveTo(nx, ny);
         std::this_thread::sleep_for(std::chrono::milliseconds((int)(dt*1000)));
     }
