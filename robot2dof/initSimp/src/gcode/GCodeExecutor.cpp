@@ -95,6 +95,6 @@ static void dwell(double seconds)
     seconds *= split_time_to_check;
     for(int i = 0; i < seconds; i++) {
         if(flag_impl.load() != 1) return;
-        std::this_thread::sleep_for(std::chrono::milliseconds((int)(seconds * (1000/split_time_to_check))));
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(seconds * (100/split_time_to_check))));
     }
 }

@@ -104,7 +104,7 @@ int main(){
                     );
                 ExecuteGCodeStep(robot, gcodeCmds, 0.07);
                 thread_done = true;
-                //flag_impl.store(0); // NOTE: use printf to debug
+                if(flag_impl.load() == 1) { flag_impl.store(0); } // stop when implement GCODE file
             });
         }
 
