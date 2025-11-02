@@ -8,7 +8,7 @@ G1 X30 Y0 F30  ; Move
 G1 X30 Y20 F30  ; Move
 G28
 G92 X0 Y0
-
+G4 P0.5
 ; --- absolute ---
 G90             ; Set absolute
 G1 X30 Y50 F50  ; Move

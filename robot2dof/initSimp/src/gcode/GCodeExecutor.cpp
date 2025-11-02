@@ -9,7 +9,7 @@ static void moveArcCW(Robot2DOF& robot, double cx, double cy, double targetX, do
 static void moveArcCCW(Robot2DOF& robot, double cx, double cy, double targetX, double targetY, double feedrate, double dt);
 static void dwell(double seconds);
 static bool absoluteMode = true;
-
+// TODO: Declare scaler => 100 and flexiable
 // Execute G-code every line
 void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, double dt)
 {
@@ -177,9 +177,9 @@ static void dwell(double seconds)
 {
     std::cout << "Dwell for " << seconds << " s" << std::endl;
     uint8_t split_time_to_check = 100;
-    seconds *= split_time_to_check;
-    for(int i = 0; i < seconds; i++) {
+    seconds /= split_time_to_check;
+    for(int i = 0; i < split_time_to_check; i++) {
         if(flag_impl.load() != 1) return;
-        std::this_thread::sleep_for(std::chrono::milliseconds((int)(seconds * (100/split_time_to_check))));
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(seconds * 1000)));
     }
 }
