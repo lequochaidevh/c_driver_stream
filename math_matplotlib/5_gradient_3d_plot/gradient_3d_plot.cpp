@@ -141,7 +141,7 @@ int main() {
     std::cout << "Minimum point nearest: (" << xmin << ", " << ymin
               << "), f = " << zmin << "\n";
 
-    // plot_surface(f);
+    plot_surface(f);
     export_surface_and_gradient(f, -3, 3, -3, 3, 0.2);
     plot_gradient_field(f, -3, 3, -3, 3, 0.2, xmin, ymin);
 

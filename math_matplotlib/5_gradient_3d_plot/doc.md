@@ -2,9 +2,23 @@
 # 📘 Bài 5: Hàm Hai Biến, Gradient, và Cực Trị
 
 ## 1️⃣ Hàm hai biến
+Phần *: Ứng dụng thực tế
+
+Tối ưu năng suất, chi phí, hiệu quả: tìm (x, y) để f(x,y) nhỏ nhất.
+
+Machine learning: hàm mất mát (loss function) là f(w1, w2, ...).
+
+Thiết kế cơ khí: tối ưu hình dạng cánh quạt, bề mặt áp suất.
+Gradient Descent (Giảm dốc)
+
+Là thuật toán tìm điểm cực tiểu:...
+```text
+α: hệ số học (learning rate)
+
+Lặp cho đến khi gradient ≈ 0
+```
 
 Một hàm hai biến là ánh xạ:
-
 $$
 f : \mathbb{R}^2 \to \mathbb{R}, \quad f(x, y) = z
 $$
@@ -22,6 +36,14 @@ Giá trị của hàm phụ thuộc đồng thời vào hai biến đầu vào.
 ## 2️⃣ Đạo hàm riêng
 
 Đạo hàm riêng đo tốc độ thay đổi của hàm theo từng hướng $x$ hoặc $y$.
+Ý nghĩa:
+- `∂f/∂x`: độ dốc theo hướng trục x  
+- `∂f/∂y`: độ dốc theo hướng trục y
+
+---
+
+## Gradient
+Gradient là **vector chứa tất cả đạo hàm riêng**:
 
 $$
 \frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x + h, y) - f(x, y)}{h}
@@ -95,6 +117,14 @@ Khi đó, xét **Hessian** tại điểm đó:
 - Nếu $D > 0$ và $f_{xx} < 0$ → **Cực đại**.  
 - Nếu $D < 0$ → **Điểm yên ngựa**.  
 - Nếu $D = 0$ → **Không kết luận được**.
+
+|Ký hiệu|Công thức|Ý nghĩa|Tên gọi|
+| :---: | :---: | :--- | :--- |
+| $$f_{xx}$$ | $$f_{xx} = \dfrac{\partial^2 f}{\partial x^2}$$ | Lấy đạo hàm 2 lần theo (x) | Đạo hàm riêng bậc hai theo (x) |
+| $$f_{yy}$$ | $$f_{yy} = \dfrac{\partial^2 f}{\partial y^2}$$ | Lấy đạo hàm 2 lần theo (y) | Đạo hàm riêng bậc hai theo (y) |
+| $$f_{xy}$$ | $$f_{xy} = \dfrac{\partial^2 f}{\partial x \partial y}$$ | Lấy đạo hàm theo (x), rồi theo (y) | Đạo hàm chéo |
+| $$f_{yx}$$ | $$f_{yx} = \dfrac{\partial^2 f}{\partial y \partial x}$$ | Lấy đạo hàm theo (y), rồi theo (x) | Đạo hàm chéo |
+
 ---
 
 ## 6️⃣ Phương pháp Gradient Descent
@@ -132,3 +162,10 @@ Quá trình lặp đến khi $|\nabla f| < \varepsilon$.
 | Gradient | $\nabla f = [f_x, f_y]$ | Hướng tăng nhanh nhất |
 | Hessian | $H(f)$ | Ma trận cong bậc hai |
 | Gradient Descent | $x_{n+1} = x_n - \alpha \nabla f$ | Tìm cực tiểu |
+
+
+## Ứng dụng thực tế
+- **Kỹ thuật**: tối ưu hóa năng lượng, hình dạng cánh quạt, thiết kế bề mặt.  
+- **Kinh tế học**: tối đa hóa lợi nhuận hoặc tối thiểu hóa chi phí với nhiều biến đầu vào.  
+- **Machine Learning**: thuật toán *Gradient Descent* tìm cực tiểu hàm lỗi.  
+- **Đồ họa 3D**: biểu diễn bề mặt, địa hình, và ánh sáng.
