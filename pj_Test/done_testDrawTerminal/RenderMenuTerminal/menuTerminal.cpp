@@ -7,10 +7,45 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <codecvt>
-
+#include <cstdlib> // Required for std::system
 
 using namespace std;
 #include <boost/locale.hpp>
+
+#include <memory>
+#include <stdexcept>
+#include <array>
+
+// A reusable function to execute a command and capture its output
+std::string exec_cli(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    // Use std::unique_ptr to automatically call pclose() when it goes out of scope
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
+
+void remove_newlines(std::string& str) {
+    str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+    str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
+}
+
+void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+    if (from.empty()) {
+        return;
+    }
+    size_t start_pos = 0;
+    while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Tiếp tục tìm kiếm sau chuỗi đã được thay thế
+    }
+}
 
 std::string ws2s(const std::wstring& w) {
     return boost::locale::conv::utf_to_utf<char>(w);
@@ -19,7 +54,7 @@ std::string ws2s(const std::wstring& w) {
 struct Menu {
     string title;
     vector<string> items;
-    vector<Menu*> children;   // con của menu
+    vector<Menu*> children;
     Menu* parent = nullptr;
 };
 
@@ -68,6 +103,52 @@ void drawBox(int y,int x,int h,int w,bool highlight,const string& text){
     }
 }
 
+std::vector<std::string> splitString(const std::string& s) {
+    std::vector<std::string> result;
+    std::stringstream ss(s);
+    std::string line;
+    while (std::getline(ss, line)) {
+        result.push_back(line);
+    }
+    return result;
+}
+
+// Hàm drawBox đã được nâng cấp để hỗ trợ nhiều dòng
+void drawBox_endl(int y, int x, int h, int w, bool highlight, const std::string& text) {
+    // ... Phần vẽ khung không đổi ...
+    mvaddwstr(y, x, L"┌");
+    mvaddwstr(y, x + w, L"┐");
+    mvaddwstr(y + h, x, L"└");
+    mvaddwstr(y + h, x + w, L"┘");
+    for (int i = 1; i < w; i++) {
+        mvaddwstr(y, x + i, L"─");
+        mvaddwstr(y + h, x + i, L"─");
+    }
+    for (int j = 1; j < h; j++) {
+        mvaddwstr(y + j, x, L"│");
+        mvaddwstr(y + j, x + w, L"│");
+    }
+
+    std::vector<std::string> lines = splitString(text);
+
+    int start_y = y + 1;
+    int max_lines = h - 2; // Số dòng tối đa có thể in trong khung
+    int current_line = 0;
+
+    for (const auto& line : lines) {
+        if (current_line >= max_lines) break; // Ngừng in nếu vượt quá khung
+
+        if (highlight) {
+            attron(A_REVERSE);
+            mvprintw(start_y + current_line, x + 2, "%s", line.c_str());
+            attroff(A_REVERSE);
+        } else {
+            mvprintw(start_y + current_line, x + 2, "%s", line.c_str());
+        }
+        current_line++;
+    }
+}
+
 // ---------------- Form Input ----------------
 wstring inputForm(int y, int x, int w, const wstring& prompt) {
     echo();
@@ -87,20 +168,19 @@ wstring inputForm(int y, int x, int w, const wstring& prompt) {
 }
 wstring inputBox(int y, int x, int w, int h, const wstring& prompt)
 {
-    // ===== VẼ KHUNG =====
-    // Góc
+    // ===== Draw Box =====
     mvadd_wch(y,   x,   WACS_ULCORNER);
     mvadd_wch(y,   x+w, WACS_URCORNER);
     mvadd_wch(y+h, x,   WACS_LLCORNER);
     mvadd_wch(y+h, x+w, WACS_LRCORNER);
 
-    // Thành ngang
+    // Collums
     for(int i=x+1;i<x+w;i++){
         mvadd_wch(y,   i, WACS_HLINE);
         mvadd_wch(y+h, i, WACS_HLINE);
     }
 
-    // Thành dọc
+    // Rows
     for(int i=y+1;i<y+h;i++){
         mvadd_wch(i, x,   WACS_VLINE);
         mvadd_wch(i, x+w, WACS_VLINE);
@@ -110,7 +190,7 @@ wstring inputBox(int y, int x, int w, int h, const wstring& prompt)
     mvaddwstr(y+1, x+2, prompt.c_str());
     refresh();
 
-    // ===== NHẬN INPUT =====
+    // ===== Get INPUT =====
     wstring result;
     int cx = x + 2 + prompt.size() + 1;  // cursor X
     int cy = y + 1;
@@ -162,13 +242,16 @@ int main(){
     vector<Pixel> img = loadImageRow("resized.png", img_w,img_h);
 
     // ================= Create MENU tree =================
-    Menu root{"Main Menu", {"Start","Options","Exit"}};
+    Menu root{"Main Menu", {"Start","Options","Commander","Exit"}};
+    Menu cli{"Commander", {"Input Command","Back"}};
     Menu opt{"Options", {"Change Name","Graphics","Back"}};
     Menu gfx{"Graphics", {"Low","Medium","High","Back"}};
     // set hierarchy
-    root.children = {nullptr, &opt, nullptr};
+    root.children = {nullptr, &opt, &cli, nullptr};
     opt.parent = &root;
     opt.children = {nullptr, &gfx, &root};
+    cli.parent = &root;
+    cli.children = {nullptr, &root};
     gfx.parent = &opt;
     gfx.children = {nullptr,nullptr,nullptr,&opt};
     Menu* current = &root;
@@ -182,10 +265,6 @@ int main(){
                 init_pair(pair_index,16 + r*36 + g*6 + b,-1);
                 pair_index++;
             }
-
-    // // ------------------- Main Loop -------------------
-    int selY=0,selX=0;
-    // vector<string> menuItems = {"Start","Options","Exit"};
 
     while(true){
         clear();
@@ -217,7 +296,7 @@ int main(){
             drawBox(startY+i*(cellH+1),startX,cellH,cellW,sel==i,current->items[i]);
         }
 
-        mvprintw(term_h-2,2,"Use arrows to move, Enter to select, q to quit.");
+        mvprintw(term_h-1, 90,"---------- Use arrows to move, Enter to select, q to quit. ----------");
         refresh();
 
         // -------- Input ----------
@@ -235,7 +314,7 @@ int main(){
 
         if(ch=='\n'){
             // Exit
-            if(current == &root && sel==2) break;
+            if(current == &root && sel==(root.items.size()-1)) break;
 
             // Option: Name
             if(current == &opt && sel==0){
@@ -244,6 +323,16 @@ int main(){
                 string reply = "Hello " + ws2s(name); 
                 drawBox(startY+4*(cellH+1)+1,startX+30,cellH+3,cellW-40,true,reply);
                 
+                getch();
+            }
+
+            if(current == &cli && sel==0){
+
+                wstring input_cli = inputBox(startY+2*(cellH+1), startX+10, cellW-20, 3, L"Input command:");
+                string linux_output = exec_cli(ws2s(input_cli).c_str());
+                // remove_newlines(linux_output);
+                // replaceAll(linux_output, "\n", "\r ");
+                drawBox_endl(startY+3*(cellH+1)+1,startX+10,cellH+10,cellW-20,true,linux_output);
                 getch();
             }
 
