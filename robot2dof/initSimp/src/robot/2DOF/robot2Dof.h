@@ -14,7 +14,7 @@ public:
     double mx, my;         // arm-destination (end-effector)
     double offsetX = 0.0;
     double offsetY = 0.0;
-    // Todo: Add singleton pattern
+    // Todo: Add singleton patter
     Robot2DOF(double _l1, double _l2)
         : l1(_l1), l2(_l2), theta1(0), theta2(0) {
         UpdatePosition();
@@ -51,5 +51,7 @@ public:
     void MoveTo(double x, double y) ;
     
     void  SetWorkOffset(double wx, double wy) ;
+
+    void  moveLinearSmooth(double tx, double ty, double feedrate, double dt);
 
 };

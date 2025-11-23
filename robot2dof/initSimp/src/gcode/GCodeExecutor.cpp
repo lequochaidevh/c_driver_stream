@@ -4,6 +4,9 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include<unistd.h>
+
+static void moveLinearSmooth(Robot2DOF& robot, double tx, double ty, double feedrate, double dt);
 static void moveLinear(Robot2DOF& robot, double targetX, double targetY, double feedrate, double dt);
 static void moveArcCW(Robot2DOF& robot, double cx, double cy, double targetX, double targetY, double feedrate, double dt);
 static void moveArcCCW(Robot2DOF& robot, double cx, double cy, double targetX, double targetY, double feedrate, double dt);
@@ -27,7 +30,8 @@ void ExecuteGCodeStep(Robot2DOF& robot, const std::vector<GCodeCommand>& cmds, d
                 tx += (robot.GetCurrentX_Machine() * 100); // G91
                 ty += (robot.GetCurrentY_Machine() * 100);
             }
-            moveLinear(robot, tx, ty, cmd.feedrate, dt);
+            //moveLinear(robot, tx, ty, cmd.feedrate, dt);
+            moveLinearSmooth(robot, tx, ty, cmd.feedrate, dt);
         }
         else if (cmd.type == "G2" || cmd.type == "G3") {
             double tx = cmd.x;
@@ -112,6 +116,69 @@ static void moveLinear(Robot2DOF& robot, double targetX, double targetY, double 
         robot.MoveTo(nx, ny);
         std::this_thread::sleep_for(std::chrono::milliseconds((int)(dt*1000)));
     }
+}
+
+static void moveLinearSmooth(Robot2DOF& robot, double tx, double ty, double feedrate, double dt)
+{
+    double cx = robot.GetCurrentX_Machine();
+    double cy = robot.GetCurrentY_Machine();
+
+    tx /= 100;
+    ty /= 100;
+    // feedrate /= 100;
+    double dx = tx - cx;
+    double dy = ty - cy;
+    double dist = std::sqrt(dx*dx + dy*dy);
+
+    if (dist < 0.001)
+        return;
+
+    double dirX = dx / dist;
+    double dirY = dy / dist;
+
+    double v     = 0.0;
+    double vMax  = feedrate / 160.0;  // mm/s
+    double accel = 400.0;            // mm/s²
+    double decel = 400.0;
+
+    double traveled = 0.0;
+
+    while (traveled < dist)
+    {
+        // --- ACCEL ---
+        v += accel * dt;
+        if (v > vMax) v = vMax;
+
+        double remain = dist - traveled;
+        double stopDist = (v * v) / (2.0 * decel);
+
+        // --- DECEL ---
+        if (stopDist >= remain) {
+            v -= decel * dt;
+            if (v < 0) v = 0;
+        }
+
+        // --- STEP ---
+        double step = v * dt;
+        if (step > remain) step = remain;
+
+        cx += dirX * step;
+        cy += dirY * step;
+
+        // --- Move robot using IK ---
+        auto sols = robot.inverseKinematics(cx, cy);
+        if (!sols.empty()) {
+            // chọn solution elbow-up
+            auto sol = sols[0];
+            robot.theta1 = sol.theta1;
+            robot.theta2 = sol.theta2;
+        }
+        robot.UpdatePosition();
+        traveled += step;
+        usleep(dt * 1e6);
+    }
+
+    robot.MoveTo(tx , ty);
 }
 
 static void moveArcCW(Robot2DOF& robot, double cx, double cy, double tx, double ty, double feedrate, double dt)

@@ -142,9 +142,11 @@ int main(){
             Vec2 p2 = Ts[2].getXY();
 
             // Draw links
-            glLineWidth(6.0f);
+            // TODO: Need factory by GLFW
+            glLineWidth(8.0f);
             glColor3f(0.2f, 0.2f, 0.8f);
             window->DrawLine(p0.x, p0.y, p1.x, p1.y);
+            glLineWidth(8.0f);
             glColor3f(0.2f, 0.8f, 0.2f);
             window->DrawLine(p1.x, p1.y, p2.x, p2.y);
             glLineWidth(1.0f);
