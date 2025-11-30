@@ -1,0 +1,10 @@
+g++ simp.cpp -g -o simp && gdb ./sim
+
+b rvalue.cpp:6
+b rvalue.cpp:11
+b rvalue.cpp:12
+b rvalue.cpp:13
+
+p make_str._M_dataplus._M_p
+p str._M_dataplus._M_p
+p str2._M_dataplus._M_p

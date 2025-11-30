@@ -1,0 +1,3 @@
+p v[0]._M_dataplus._M_p
+p str._M_dataplus._M_p
+p v[1]._M_dataplus._M_p
