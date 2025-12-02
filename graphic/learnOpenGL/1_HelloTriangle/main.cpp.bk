@@ -1,0 +1,54 @@
+#include <iostream>
+#include "../../glad.h"
+#include <GL/gl.h>
+#include <GLFW/glfw3.h>
+
+int main()
+{
+    if (!glfwInit()) {
+        std::cout << "Failed to initialize GLFW\n";
+        return -1;
+    }
+
+    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    if (!window)
+    {
+        std::cout << "Failed to create GLFW window\n";
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+
+    float inputs_2D[] = { // 2D
+        0,0,
+        0,1,
+        1,0
+    }; // Normnalized Device Coordinates NDC
+
+    // init VBO Vertex Buffer Object
+    // API
+    unsigned int vbo_id;
+    glGenBuffers(1, &vbo_id);
+    
+    while (!glfwWindowShouldClose(window))
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // glBegin(GL_TRIANGLES);
+        // glVertex2f(0,0);
+        // glVertex2f(0,1);
+        // glVertex2f(1,0);
+        // glEnd();
+
+        // Program with pipeline
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_id); // do_something 1 2 3 ... -> state machine
+        glBufferData(GL_ARRAY_BUFFER, sizeof(inputs_2D), inputs_2D, GL_STATIC_DRAW);
+        
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();  // <-- required!
+    }
+
+    glfwTerminate();
+    return 0;
+}
