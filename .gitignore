@@ -11,3 +11,4 @@ vendor_build/
 tmp/
 test*
 .vscode
+private_files/
