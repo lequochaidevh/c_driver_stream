@@ -20,5 +20,7 @@ int main() {
         pipeline.run_once(buf);
     }
 
+    pipeline.stop();
+
     pipeline.shutdown();
 }

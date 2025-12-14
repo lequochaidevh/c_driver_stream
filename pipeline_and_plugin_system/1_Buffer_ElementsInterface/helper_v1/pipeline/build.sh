@@ -36,6 +36,6 @@ g++ main.cpp \
     -L../core -lpipeline_core \
     -lyaml-cpp \
     -ldl \
-    -o app
+    -o appExc
 
-LD_LIBRARY_PATH=../core ./app
+LD_LIBRARY_PATH=../core ./appExc
