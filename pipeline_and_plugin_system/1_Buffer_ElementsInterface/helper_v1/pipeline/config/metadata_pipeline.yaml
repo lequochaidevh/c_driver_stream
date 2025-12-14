@@ -1,0 +1,5 @@
+pipeline:
+  - name: filter
+    type: InvertFilter
+  - name: sink
+    type: DebugSink
