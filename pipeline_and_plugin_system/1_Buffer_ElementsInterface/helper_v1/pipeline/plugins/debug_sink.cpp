@@ -15,7 +15,7 @@ class DebugSink : public Element {
     }
 
     bool process(BufferPtr& buf) override {
-        std::cout << "[DebugSink][no coppy] got buffer size = " << buf->data.size() << std::endl;
+        // std::cout << "[DebugSink][no coppy] got buffer size = " << buf->data.size() << std::endl;
         return true;
     }
 
