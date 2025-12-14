@@ -6,5 +6,5 @@
 
 class PipelineBuilder {
  public:
-    static Pipeline build_from_yaml(const std::string& yaml_path, PluginRegistry& registry);
+    static std::unique_ptr<Pipeline> build_from_yaml(const std::string& path, PluginRegistry& registry);
 };

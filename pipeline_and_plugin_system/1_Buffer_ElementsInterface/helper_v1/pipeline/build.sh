@@ -39,3 +39,5 @@ g++ main.cpp \
     -o appExc
 
 LD_LIBRARY_PATH=../core ./appExc
+
+# LD_LIBRARY_PATH=../core valgrind --leak-check=full --show-leak-kinds=all ./appExc

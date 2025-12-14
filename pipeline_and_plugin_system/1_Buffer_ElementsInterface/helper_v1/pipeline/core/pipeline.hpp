@@ -9,7 +9,17 @@
 
 class Pipeline {
  public:
-    void add(Element* e);
+    Pipeline()  = default;
+    ~Pipeline() = default;
+
+    Pipeline(const Pipeline&) = delete;
+    Pipeline& operator=(const Pipeline&) = delete;
+
+    Pipeline(Pipeline&&) = default;
+    Pipeline& operator=(Pipeline&&) = default;
+
+ public:
+    void add(std::unique_ptr<Element> elem);
     bool init();
     bool start();
     bool run_once();
@@ -18,6 +28,6 @@ class Pipeline {
     void stop();
 
  private:
-    std::vector<Element*>  elements;
-    std::vector<BufferPtr> buffers;
+    std::vector<std::unique_ptr<Element>> elements;
+    std::vector<BufferPtr>                buffers;
 };

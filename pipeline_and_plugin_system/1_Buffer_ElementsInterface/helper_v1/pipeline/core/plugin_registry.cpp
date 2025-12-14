@@ -39,16 +39,11 @@ bool PluginRegistry::scan(const std::string& directory) {
     return true;
 }
 
-// Element* PluginRegistry::create(const std::string& name) {
-//     if (!plugins.count(name)) return nullptr;
-//     return plugins[name].create_fn();
-// }
+std::unique_ptr<Element> PluginRegistry::create(const std::string& type) {
+    auto it = plugins.find(type);
+    if (it == plugins.end()) return nullptr;
 
-Element* PluginRegistry::create(const std::string& name) {
-    auto it = plugins.find(name);
-    if (it == plugins.end()) throw std::runtime_error("Plugin not found: " + name);
-
-    return it->second.create_fn();
+    return std::unique_ptr<Element>(it->second.create_fn());
 }
 
 PluginRegistry::~PluginRegistry() {

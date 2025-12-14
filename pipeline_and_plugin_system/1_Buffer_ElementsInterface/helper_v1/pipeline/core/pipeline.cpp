@@ -3,11 +3,11 @@
 // =====================================================
 #include "pipeline.hpp"
 
-void Pipeline::add(Element* e) { elements.push_back(e); }
+void Pipeline::add(std::unique_ptr<Element> elem) { elements.push_back(std::move(elem)); }
 
 bool Pipeline::init() {  // TODO : Add zero coppy
     // buffers.resize(elements.size() + 1);
-    for (auto* e : elements) {
+    for (auto& e : elements) {
         BufferPtr in  = std::make_shared<Buffer>(1024);
         BufferPtr out = std::make_shared<Buffer>(1024);  // TODO: optimize
 
@@ -34,7 +34,7 @@ bool Pipeline::run_once(BufferPtr& buf) {
 }
 
 void Pipeline::shutdown() {
-    for (auto* e : elements) e->shutdown();
+    for (auto& e : elements) e->shutdown();
 }
 
 void Pipeline::stop() {

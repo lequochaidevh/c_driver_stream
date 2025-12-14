@@ -11,8 +11,8 @@
 
 class PluginRegistry {
  public:
-    bool     scan(const std::string& directory);
-    Element* create(const std::string& name);
+    bool                     scan(const std::string& directory);
+    std::unique_ptr<Element> create(const std::string& type);
     ~PluginRegistry();
 
  private:
