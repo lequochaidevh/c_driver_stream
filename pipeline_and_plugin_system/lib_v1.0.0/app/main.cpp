@@ -1,10 +1,22 @@
 #include "../core/pipeline_builder.hpp"
 #include "../core/plugin_registry.hpp"
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
+
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 #define DLL_PLUGINS YAML
 
 #if (DLL_PLUGINS == YAML)
 int main() {
+    spdlog::set_pattern("[%H:%M:%S.%e] [%^%l%$] [t:%t] %v");
+    spdlog::set_level(spdlog::level::debug);
+    SPDLOG_DEBUG("[QueuePad:{}] push size={}", "Test SPDLOG integrate", 10000);
+    SPDLOG_INFO("[QueuePad:{}] push size={}", "Test SPDLOG integrate", 10000);
+    SPDLOG_WARN("[QueuePad:{}] push size={}", "Test SPDLOG integrate", 10000);
+    SPDLOG_CRITICAL("[QueuePad:{}] push size={}", "Test SPDLOG integrate", 10000);
+    return 0;
+
     PluginRegistry registry;
     registry.scan("../plugins");
 

@@ -1,6 +1,5 @@
 #include "../core/component/element.hpp"
 #include "../core/component/queue/queue_pad.hpp"
-
 class Source : public Element {
  public:
     Source() {
