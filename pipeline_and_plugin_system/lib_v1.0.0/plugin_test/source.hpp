@@ -9,7 +9,7 @@ class Source : public Element {
         static_cast<QueuePad*>(src.get())->debug_element = name() + std::string(" src");
     }
 
-    void push(BufferShrPtr buf) {
+    bool push(BufferShrPtr buf) {
         src->push(std::move(buf));
         std::cout << "Source push buffer\n";
     }
