@@ -18,15 +18,29 @@ cd -
 
 cd ./plugins
 
-# g++ -fPIC -shared invert_filter.cpp \
-#     -I../core \
-#     -L../core -lpipeline_core \
-#     -o libinvert_filter.so
+g++ -fPIC -shared invert_filter.cpp \
+    -I../core \
+    -I../core/component \
+    -I../core/component/queue \
+    -I../core/unit \
+    -L../core -lpipeline_core \
+    -o libinvert_filter.so
 
-# g++ -fPIC -shared debug_sink.cpp \
-#     -I../core \
-#     -L../core -lpipeline_core \
-#     -o libdebug_sink.so
+g++ -fPIC -shared sink.cpp \
+    -I../core \
+    -I../core/component \
+    -I../core/component/queue \
+    -I../core/unit \
+    -L../core -lpipeline_core \
+    -o lib_sink.so
+
+g++ -fPIC -shared source.cpp \
+    -I../core \
+    -I../core/component \
+    -I../core/component/queue \
+    -I../core/unit \
+    -L../core -lpipeline_core \
+    -o lib_source.so
 
 cd -
 
@@ -39,6 +53,6 @@ g++ main.cpp \
     -ldl \
     -o appExc
 
-LD_LIBRARY_PATH=../core ./appExc
+# LD_LIBRARY_PATH=../core ./appExc
 
-# LD_LIBRARY_PATH=../core valgrind --leak-check=full --show-leak-kinds=all ./appExc
+LD_LIBRARY_PATH=../core valgrind --leak-check=full --show-leak-kinds=all ./appExc

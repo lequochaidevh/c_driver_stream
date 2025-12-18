@@ -1,3 +1,7 @@
 pipeline:
+  - name: src
+    type: Source
   - name: filter
     type: InvertFilter
+  - name: sink
+    type: Sink

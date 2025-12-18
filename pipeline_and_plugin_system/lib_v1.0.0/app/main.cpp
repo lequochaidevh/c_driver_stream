@@ -1,59 +1,60 @@
 #include "../core/pipeline_builder.hpp"
 #include "../core/plugin_registry.hpp"
 
-// int main() {
-//     PluginRegistry registry;
-//     registry.scan("../plugins");
+#define DLL_PLUGINS YAML
 
-//     std::unique_ptr<Pipeline> pipeline = PipelineBuilder::build_from_yaml("../config/metadata_pipeline.yaml",
-//     registry);
+#if (DLL_PLUGINS == YAML)
+int main() {
+    PluginRegistry registry;
+    registry.scan("../plugins");
 
-//     if (!pipeline->init()) {
-//         std::cerr << "init failed\n";
-//         return -1;
-//     }
+    std::unique_ptr<Pipeline> pipeline = PipelineBuilder::build_from_yaml("../config/metadata_pipeline.yaml", registry);
 
-//     if (!pipeline->start()) {
-//         std::cerr << "start failed\n";
-//         return -1;
-//     }
+    if (!pipeline->init()) {
+        std::cerr << "init failed\n";
+        return -1;
+    }
 
-//     constexpr int N   = 10000;
-//     BufferPtr     buf = std::make_shared<Buffer>(4096);
+    if (!pipeline->start()) {
+        std::cerr << "start failed\n";
+        return -1;
+    }
 
-//     for (int i = 0; i < N; i++) {
-//         if (!pipeline->run_once(buf)) {
-//             std::cerr << "run_once failed at " << i << std::endl;
-//             break;
-//         }
+    for (int i = 0; i < 100; ++i) {
+        pipeline.get()->push_frame(std::make_shared<Buffer>(1024));
+    }
 
-//         if (i % 1000 == 0) std::cout << "Processed " << i << " buffers\n";
-//     }
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
-//     pipeline->stop();
-//     pipeline->shutdown();
+    pipeline->stop();
+    pipeline->shutdown();
 
-//     std::cout << "DONE\n";
+    std::cout << "DONE\n";
 
-//     for (int i = 0; i < 100; i++) {
-//         auto p = PipelineBuilder::build_from_yaml("../config/metadata_pipeline.yaml", registry);
+    for (int i = 0; i < 50; i++) {
+        auto p = PipelineBuilder::build_from_yaml("../config/metadata_pipeline.yaml", registry);
 
-//         p->init();
-//         p->start();
+        p->init();
+        p->start();
 
-//         BufferPtr buf = std::make_shared<Buffer>(256);
-//         for (int j = 0; j < 100; j++) p->run_once(buf);
+        BufferShrPtr buf = std::make_shared<Buffer>(256);
+        for (int j = 0; j < 100; j++) {
+            p.get()->push_frame(std::make_shared<Buffer>(1024));
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(7));  // for close all thread before shutdown
+        p->stop();
+        p->shutdown();
+    }
 
-//         p->stop();
-//         p->shutdown();
-//     }
+    std::cout << "DONE 2 \n";
+}
 
-//     std::cout << "DONE 2 \n";
-// }
+#else
+//
 
-#include "../plugin_test/filter.hpp"
-#include "../plugin_test/sink.hpp"
-#include "../plugin_test/source.hpp"
+#    include "../plugin_test/filter.hpp"
+#    include "../plugin_test/sink.hpp"
+#    include "../plugin_test/source.hpp"
 
 int main() {
     auto src  = std::make_unique<Source>();
@@ -71,3 +72,5 @@ int main() {
 
     std::this_thread::sleep_for(std::chrono::seconds(30));
 }
+
+#endif  // DLL_PLUGINS

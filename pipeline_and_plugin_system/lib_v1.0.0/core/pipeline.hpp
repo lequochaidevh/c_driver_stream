@@ -29,6 +29,8 @@ class Pipeline {
 
     void link(Element* a, Element* b);
 
+    bool push_frame(BufferShrPtr frame);
+
  private:
     std::vector<std::unique_ptr<Element>> elements;
     std::vector<BufferShrPtr>             buffers;

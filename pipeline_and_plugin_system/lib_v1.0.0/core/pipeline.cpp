@@ -6,14 +6,16 @@
 void Pipeline::add(std::unique_ptr<Element> elem) { elements.push_back(std::move(elem)); }
 
 bool Pipeline::init() {  // TODO : Add zero coppy
+    Element* element_before = nullptr;
+
     for (auto& e : elements) {
-        BufferShrPtr in  = std::make_shared<Buffer>(1024);
-        BufferShrPtr out = std::make_shared<Buffer>(1024);  // TODO: optimize
+        if (!e->init()) return false;
 
-        buffers.emplace_back(in);
-        buffers.emplace_back(out);  // TODO: optimize
+        if (element_before) {  // skip first source element
+            link(element_before, e.get());
+        }
 
-        if (!e->init()) return false;  // element init override
+        element_before = e.get();
     }
 
     return true;
@@ -51,4 +53,10 @@ void Pipeline::link(Element* a, Element* b) {
     auto sink = static_cast<QueuePad*>(b->sink_pad());
     std::cout << "[link] link pad a to b \n";
     src->set_next([sink](auto buf) { sink->push(buf); });
+}
+
+bool Pipeline::push_frame(BufferShrPtr frame) {
+    if (elements.empty()) return false;
+    elements[0].get()->push(frame);
+    return false;
 }

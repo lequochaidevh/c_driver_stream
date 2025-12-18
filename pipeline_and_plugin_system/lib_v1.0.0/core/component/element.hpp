@@ -22,6 +22,11 @@ class Element {
 
     virtual const char* name() const = 0;
 
+    virtual bool push(BufferShrPtr buf) {
+        std::cout << "ERROR: can not push src to this element";
+        return false;
+    };
+
  protected:
     std::unique_ptr<Pad> src;
     std::unique_ptr<Pad> sink;
