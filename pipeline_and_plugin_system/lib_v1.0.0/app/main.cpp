@@ -1,21 +1,13 @@
 #include "../core/pipeline_builder.hpp"
 #include "../core/plugin_registry.hpp"
-
-#include "../core/logger/logger.hpp"
+#include "../core/logger/printLog.hpp"
 
 #define DLL_PLUGINS YAML
 
+using namespace ViPlugsEngine;
+
 #if (DLL_PLUGINS == YAML)
 int main() {
-    ViPlugsEngine::Logger::init();
-    CORE_LOG_INFO("Info works:");
-    CORE_LOG_TRACE("Trace works");
-    CORE_LOG_WARN("Warn works");
-    CORE_LOG_ERROR("Error works");
-    CORE_LOG_CRITICAL("Critical works");
-
-    return 0;
-
     PluginRegistry registry;
     registry.scan("../plugins");
 
@@ -40,7 +32,7 @@ int main() {
     pipeline->stop();
     pipeline->shutdown();
 
-    std::cout << "DONE\n";
+    printLog.info("DONE");
 
     for (int i = 0; i < 50; i++) {
         auto p = PipelineBuilder::build_from_yaml("../config/metadata_pipeline.yaml", registry);
@@ -57,7 +49,7 @@ int main() {
         p->shutdown();
     }
 
-    std::cout << "DONE 2 \n";
+    printLog.info("DONE TEST CASE 2");
 }
 
 #else

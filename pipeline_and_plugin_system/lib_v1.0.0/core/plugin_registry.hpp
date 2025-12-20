@@ -5,9 +5,7 @@
 #pragma once
 
 #include "pipeline_core.hpp"
-#include <string>
-#include <unordered_map>
-#include <vector>
+namespace ViPlugsEngine {
 
 class PluginRegistry {
  public:
@@ -23,3 +21,5 @@ class PluginRegistry {
 
     std::unordered_map<std::string, PluginInfo> plugins;
 };
+
+}  // namespace ViPlugsEngine

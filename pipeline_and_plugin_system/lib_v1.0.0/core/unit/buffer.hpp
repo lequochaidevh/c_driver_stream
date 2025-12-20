@@ -2,7 +2,8 @@
 #include "pre_compile_header_file.hpp"
 #include "metadata.hpp"
 
-// ---------- Buffer ----------
+namespace ViPlugsEngine {
+
 struct Buffer {
     uint64_t             pts = 0;
     std::vector<uint8_t> data;
@@ -14,3 +15,5 @@ struct Buffer {
 };
 
 using BufferShrPtr = std::shared_ptr<Buffer>;
+
+}  // namespace ViPlugsEngine

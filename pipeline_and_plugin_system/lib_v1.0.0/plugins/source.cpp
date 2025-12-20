@@ -1,5 +1,8 @@
-#include "../core/component/element.hpp"
+#include "../core/pipeline_core.hpp"
 #include "../core/component/queue/queue_pad.hpp"
+
+namespace ViPlugsEngine {
+
 class Source : public Element {
  public:
     Source() {
@@ -40,3 +43,5 @@ class Source : public Element {
 };
 
 extern "C" Element* create() { return new Source(); }
+
+}  // namespace ViPlugsEngine

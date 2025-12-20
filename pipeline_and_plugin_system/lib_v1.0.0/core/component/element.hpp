@@ -2,7 +2,8 @@
 
 #include "../unit/buffer.hpp"
 #include "../unit/pad.hpp"
-
+#include "../logger/printLog.hpp"
+namespace ViPlugsEngine {
 // ---------- Element Interface ----------
 class Element {
  public:
@@ -23,7 +24,7 @@ class Element {
     virtual const char* name() const = 0;
 
     virtual bool push(BufferShrPtr buf) {
-        std::cout << "ERROR: can not push src to this element";
+        printLog.error("ERROR: can not push src to this element");
         return false;
     };
 
@@ -31,3 +32,5 @@ class Element {
     std::unique_ptr<Pad> src;
     std::unique_ptr<Pad> sink;
 };
+
+}  // namespace ViPlugsEngine

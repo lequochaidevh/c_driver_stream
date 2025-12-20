@@ -11,6 +11,7 @@ g++ -fPIC -shared \
     pipeline_builder.cpp \
     component/queue/queue_pad.cpp \
     logger/logger.cpp \
+    logger/printLog.cpp \
     -lyaml-cpp \
     -lpthread \
     -I../../../third_party/spdlog/include \
@@ -24,7 +25,6 @@ g++ -fPIC -shared invert_filter.cpp \
     -I../core \
     -I../core/component \
     -I../core/component/queue \
-    -I../core/unit \
     -L../core -lpipeline_core \
     -o libinvert_filter.so
 
@@ -32,7 +32,6 @@ g++ -fPIC -shared sink.cpp \
     -I../core \
     -I../core/component \
     -I../core/component/queue \
-    -I../core/unit \
     -L../core -lpipeline_core \
     -o lib_sink.so
 
@@ -40,7 +39,6 @@ g++ -fPIC -shared source.cpp \
     -I../core \
     -I../core/component \
     -I../core/component/queue \
-    -I../core/unit \
     -L../core -lpipeline_core \
     -o lib_source.so
 
@@ -56,8 +54,8 @@ g++ main.cpp \
     -I../../../third_party/spdlog/include \
     -o appExc
 
-LD_LIBRARY_PATH=../core ./appExc
+# LD_LIBRARY_PATH=../core ./appExc
 
-# LD_LIBRARY_PATH=../core valgrind --leak-check=full --show-leak-kinds=all ./appExc
+LD_LIBRARY_PATH=../core valgrind --leak-check=full --show-leak-kinds=all ./appExc
 
     # -L../prebuild -lspdlog \

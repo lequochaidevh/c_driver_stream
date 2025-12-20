@@ -1,6 +1,7 @@
 #pragma once
 #include "../../unit/pad.hpp"
 
+namespace ViPlugsEngine {
 class QueuePad : public Pad {
  public:
     explicit QueuePad(PadDirection dir);
@@ -26,3 +27,5 @@ class QueuePad : public Pad {
  public:
     std::string debug_element;
 };
+
+}  // namespace ViPlugsEngine

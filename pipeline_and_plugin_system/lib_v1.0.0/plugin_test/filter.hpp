@@ -14,7 +14,7 @@ class Filter : public Element {
     }
 
     bool init() override {
-        std::cout << "[Filter] init\n";
+        CORE_LOG_DEBUG("[QueuePad::push] {} ", debug_element);
         return true;
     }
 

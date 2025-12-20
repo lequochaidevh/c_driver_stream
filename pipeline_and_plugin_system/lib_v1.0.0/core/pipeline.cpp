@@ -2,10 +2,13 @@
 // pipeline.cpp
 // =====================================================
 #include "pipeline.hpp"
+#include "logger/logger.hpp"
+namespace ViPlugsEngine {
 
 void Pipeline::add(std::unique_ptr<Element> elem) { elements.push_back(std::move(elem)); }
 
 bool Pipeline::init() {  // TODO : Add zero coppy
+    Environment::init();
     Element* element_before = nullptr;
 
     for (auto& e : elements) {
@@ -14,10 +17,8 @@ bool Pipeline::init() {  // TODO : Add zero coppy
         if (element_before) {  // skip first source element
             link(element_before, e.get());
         }
-
         element_before = e.get();
     }
-
     return true;
 }
 
@@ -51,7 +52,8 @@ bool Pipeline::start() {
 void Pipeline::link(Element* a, Element* b) {
     auto src  = static_cast<QueuePad*>(a->src_pad());
     auto sink = static_cast<QueuePad*>(b->sink_pad());
-    std::cout << "[link] link pad a to b \n";
+
+    CORE_LOG_DEBUG("Init pad to link");
     src->set_next([sink](auto buf) { sink->push(buf); });
 }
 
@@ -60,3 +62,5 @@ bool Pipeline::push_frame(BufferShrPtr frame) {
     elements[0].get()->push(frame);
     return false;
 }
+
+}  // namespace ViPlugsEngine

@@ -6,6 +6,7 @@
 
 #include "caps.hpp"
 #include "buffer.hpp"
+namespace ViPlugsEngine {
 
 enum class PadDirection { SRC, SINK };
 
@@ -21,3 +22,5 @@ class Pad {
     virtual bool accept_caps(const Caps&) = 0;
     Caps         caps;
 };
+
+}  // namespace ViPlugsEngine

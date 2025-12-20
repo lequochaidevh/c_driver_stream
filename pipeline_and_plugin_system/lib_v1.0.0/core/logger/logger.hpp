@@ -2,11 +2,11 @@
 
 #include "../unit/pre_compile_header_file.hpp"
 
-#include <spdlog/spdlog.h>
-#include <spdlog/common.h>
+#include "spdlog/spdlog.h"
+#include "spdlog/common.h"
 
-#include <spdlog/fmt/ostr.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
+#include "spdlog/fmt/ostr.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 #define _DEBUG 1
 
@@ -21,7 +21,6 @@ class VIPLUGS_API Logger {
     static Shared<spdlog::logger> sCoreLogger;
     static Shared<spdlog::logger> sClientLogger;
 };
-}  // namespace ViPlugsEngine
 
 #define LOG_WITH_DETAILS(logger, level, ...) \
     logger->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__)
@@ -57,3 +56,5 @@ class VIPLUGS_API Logger {
 #define LOG_ERROR(...)
 #define LOG_CRITICAL(...)
 #endif
+
+}  // namespace ViPlugsEngine

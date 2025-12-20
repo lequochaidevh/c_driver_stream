@@ -1,4 +1,7 @@
 #include "queue_pad.hpp"
+#include "../../logger/logger.hpp"
+namespace ViPlugsEngine {
+
 QueuePad::QueuePad(PadDirection dir) : Pad(dir) { worker = std::thread(&QueuePad::run, this); }
 
 QueuePad::~QueuePad() {
@@ -11,7 +14,7 @@ void QueuePad::push(BufferShrPtr buf) {
     {
         std::lock_guard<std::mutex> lk(mtx);
         q.push(buf);
-        std::cout << "[QueuePad::push] sleep_for --- s --- " << debug_element << "\n";
+        CORE_LOG_DEBUG("[QueuePad::push] {} ", debug_element);
     }
     cv.notify_one();
 }
@@ -21,7 +24,7 @@ void QueuePad::set_next(std::function<void(BufferShrPtr)> fn) { next = std::move
 bool QueuePad::accept_caps(const Caps&) { return true; }
 
 void QueuePad::run() {
-    std::cout << "[QueuePad::run] thread start\n";
+    CORE_LOG_DEBUG("[QueuePad::run] thread start");
     while (running) {
         BufferShrPtr buf;
         {
@@ -34,3 +37,5 @@ void QueuePad::run() {
         if (next) next(std::move(buf));
     }
 }
+
+}  // namespace ViPlugsEngine

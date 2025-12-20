@@ -2,6 +2,8 @@
 #include "pipeline_builder.hpp"
 #include <yaml-cpp/yaml.h>
 
+namespace ViPlugsEngine {
+
 std::unique_ptr<Pipeline> PipelineBuilder::build_from_yaml(const std::string& path, PluginRegistry& registry) {
     auto pipeline = std::make_unique<Pipeline>();
 
@@ -13,5 +15,7 @@ std::unique_ptr<Pipeline> PipelineBuilder::build_from_yaml(const std::string& pa
 
     return pipeline;  // MOVE unique_ptr (OK)
 }
+
+}  // namespace ViPlugsEngine
 
 // sudo apt install libyaml-cpp-dev

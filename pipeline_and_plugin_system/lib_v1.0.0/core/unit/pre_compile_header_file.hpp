@@ -21,6 +21,12 @@
 #include <list>
 #include <unordered_set>
 #include <stack>
+
+#include <filesystem>
+#include <dlfcn.h>
+
+#include <cstdarg>
+
 template <typename T>
 using Shared = std::shared_ptr<T>;
 template <typename T>

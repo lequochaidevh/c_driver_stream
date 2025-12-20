@@ -1,6 +1,7 @@
 #include "../core/pipeline_core.hpp"
 #include "../core/component/queue/queue_pad.hpp"
-#include <iostream>
+
+namespace ViPlugsEngine {
 
 class InvertFilter : public Element {
  public:
@@ -52,6 +53,8 @@ class InvertFilter : public Element {
 };
 
 extern "C" Element* create() { return new InvertFilter(); }
+
+}  // namespace ViPlugsEngine
 
 /*
 

@@ -1,20 +1,18 @@
-
-
 // =====================================================
 // plugin_registry.cpp
 // =====================================================
-// Không new Element trong registry
-
-// Registry chỉ tạo khi app yêu cầu
+// NOT new Element in registry
+// Only Registry when app required
 
 #include "plugin_registry.hpp"
-#include <filesystem>
-#include <dlfcn.h>
-#include <iostream>
+#include "logger/logger.hpp"
 
 namespace fs = std::filesystem;
 
+namespace ViPlugsEngine {
+
 bool PluginRegistry::scan(const std::string& directory) {
+    Environment::init();
     for (const auto& entry : fs::directory_iterator(directory)) {
         if (entry.path().extension() != ".so") continue;
 
@@ -34,7 +32,7 @@ bool PluginRegistry::scan(const std::string& directory) {
         plugins[tmp->name()] = {handle, create_fn};
         delete tmp;
 
-        std::cout << "Loaded plugin: " << entry.path() << std::endl;
+        CORE_LOG_DEBUG("Loaded plugin: {}", entry.path().string());
     }
     return true;
 }
@@ -49,3 +47,5 @@ std::unique_ptr<Element> PluginRegistry::create(const std::string& type) {
 PluginRegistry::~PluginRegistry() {
     for (auto& [_, p] : plugins) dlclose(p.handle);
 }
+
+}  // namespace ViPlugsEngine

@@ -1,11 +1,13 @@
+#pragma once
 // =====================================================
 // pipeline.hpp
 // Linear pipeline executor (step 1)
 // =====================================================
-#pragma once
 
 #include "pipeline_core.hpp"
 #include "../core/component/queue/queue_pad.hpp"
+
+namespace ViPlugsEngine {
 
 class Pipeline {
  public:
@@ -35,3 +37,5 @@ class Pipeline {
     std::vector<std::unique_ptr<Element>> elements;
     std::vector<BufferShrPtr>             buffers;
 };
+
+}  // namespace ViPlugsEngine
