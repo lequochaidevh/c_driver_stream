@@ -10,8 +10,10 @@ g++ -fPIC -shared \
     pipeline.cpp \
     pipeline_builder.cpp \
     component/queue/queue_pad.cpp \
+    logger/logger.cpp \
     -lyaml-cpp \
     -lpthread \
+    -I../../../third_party/spdlog/include \
     -o libpipeline_core.so
 
 cd -
@@ -57,3 +59,5 @@ g++ main.cpp \
 LD_LIBRARY_PATH=../core ./appExc
 
 # LD_LIBRARY_PATH=../core valgrind --leak-check=full --show-leak-kinds=all ./appExc
+
+    # -L../prebuild -lspdlog \

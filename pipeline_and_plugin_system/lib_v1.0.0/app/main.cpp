@@ -1,20 +1,19 @@
 #include "../core/pipeline_builder.hpp"
 #include "../core/plugin_registry.hpp"
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include "../core/logger/logger.hpp"
 
 #define DLL_PLUGINS YAML
 
 #if (DLL_PLUGINS == YAML)
 int main() {
-    spdlog::set_pattern("[%H:%M:%S.%e] [%^%l%$] [t:%t] %v");
-    spdlog::set_level(spdlog::level::debug);
-    SPDLOG_DEBUG("[QueuePad:{}] push size={}", "Test SPDLOG integrate", 10000);
-    SPDLOG_INFO("[QueuePad:{}] push size={}", "Test SPDLOG integrate", 10000);
-    SPDLOG_WARN("[QueuePad:{}] push size={}", "Test SPDLOG integrate", 10000);
-    SPDLOG_CRITICAL("[QueuePad:{}] push size={}", "Test SPDLOG integrate", 10000);
+    ViPlugsEngine::Logger::init();
+    CORE_LOG_INFO("Info works:");
+    CORE_LOG_TRACE("Trace works");
+    CORE_LOG_WARN("Warn works");
+    CORE_LOG_ERROR("Error works");
+    CORE_LOG_CRITICAL("Critical works");
+
     return 0;
 
     PluginRegistry registry;
@@ -64,9 +63,9 @@ int main() {
 #else
 //
 
-#    include "../plugin_test/filter.hpp"
-#    include "../plugin_test/sink.hpp"
-#    include "../plugin_test/source.hpp"
+#include "../plugin_test/filter.hpp"
+#include "../plugin_test/sink.hpp"
+#include "../plugin_test/source.hpp"
 
 int main() {
     auto src  = std::make_unique<Source>();
