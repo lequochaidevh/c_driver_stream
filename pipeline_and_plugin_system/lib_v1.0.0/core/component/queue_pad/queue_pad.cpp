@@ -14,7 +14,7 @@ void QueuePad::push(BufferShrPtr buf) {
     {
         std::lock_guard<std::mutex> lk(mtx);
         q.push(buf);
-        CORE_LOG_DEBUG("queue of element: {} ", debug_element);
+        CORE_LOG_TRACE("queue of element: {} ", debug_element);
     }
     cv.notify_one();
 }

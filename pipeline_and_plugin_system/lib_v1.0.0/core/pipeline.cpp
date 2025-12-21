@@ -3,6 +3,9 @@
 // =====================================================
 #include "pipeline.hpp"
 #include "logger/logger.hpp"
+
+#include "../core/component/queue_pad/queue_pad.hpp"
+#include "../core/component/simple_pad/simple_pad.hpp"
 namespace ViPlugsEngine {
 
 void Pipeline::add(std::unique_ptr<Element> elem) { elements.push_back(std::move(elem)); }
@@ -50,9 +53,11 @@ bool Pipeline::start() {
 }
 
 void Pipeline::link(Element* a, Element* b) {
-    auto src  = static_cast<QueuePad*>(a->src_pad());
-    auto sink = static_cast<QueuePad*>(b->sink_pad());
+    // auto src  = static_cast<QueuePad*>(a->src_pad());
+    // auto sink = static_cast<QueuePad*>(b->sink_pad());
 
+    Pad* src  = a->src_pad();
+    Pad* sink = b->sink_pad();
     CORE_LOG_DEBUG("Init pad to link");
     src->set_next([sink](auto buf) { sink->push(buf); });
 }

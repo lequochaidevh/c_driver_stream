@@ -1,5 +1,6 @@
 #include "../core/pipeline_core.hpp"
-#include "../core/component/queue/queue_pad.hpp"
+#include "../core/component/queue_pad/queue_pad.hpp"
+#include "../core/component/simple_pad/simple_pad.hpp"
 
 namespace ViPlugsEngine {
 
@@ -12,7 +13,7 @@ class Source : public Element {
 
     bool push(BufferShrPtr buf) {
         src->push(std::move(buf));
-        LOG_DEBUG("Source push");
+        LOG_TRACE("Source push");
         return true;
     }
 

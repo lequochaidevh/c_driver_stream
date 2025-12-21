@@ -25,7 +25,7 @@ int main() {
         return -1;
     }
 
-    for (int i = 0; i < 30000; ++i) {
+    for (int i = 0; i < 6; ++i) {
         pipeline.get()->push_frame(std::make_shared<Buffer>(1024));
     }
 

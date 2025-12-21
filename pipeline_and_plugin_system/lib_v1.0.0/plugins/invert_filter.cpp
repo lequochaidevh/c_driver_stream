@@ -1,5 +1,6 @@
 #include "../core/pipeline_core.hpp"
-#include "../core/component/queue/queue_pad.hpp"
+#include "../core/component/queue_pad/queue_pad.hpp"
+#include "../core/component/simple_pad/simple_pad.hpp"
 
 namespace ViPlugsEngine {
 
@@ -7,9 +8,9 @@ class InvertFilter : public Element {
  public:
     InvertFilter() {
         sink                                              = std::make_unique<QueuePad>(PadDirection::SINK);
-        src                                               = std::make_unique<QueuePad>(PadDirection::SRC);
+        src                                               = std::make_unique<SimplePad>(PadDirection::SRC);
         static_cast<QueuePad*>(sink.get())->debug_element = name() + std::string(" _sink");
-        static_cast<QueuePad*>(src.get())->debug_element  = name() + std::string(" src");
+        static_cast<SimplePad*>(src.get())->debug_element = name() + std::string(" src");
 
         static_cast<QueuePad*>(sink.get())->set_next([this](BufferShrPtr b) { on_buffer(b); });
     }
@@ -39,7 +40,7 @@ class InvertFilter : public Element {
         for (auto& b : buf->data) b = 255 - b;
         // heavy work
         // std::this_thread::sleep_for(std::chrono::milliseconds(33));
-        LOG_DEBUG("InvertFilter on_buffer");
+        LOG_TRACE("InvertFilter on_buffer");
         src->push(std::move(buf));
     }
 

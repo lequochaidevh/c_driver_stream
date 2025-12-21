@@ -9,7 +9,8 @@ g++ -fPIC -shared \
     plugin_registry.cpp \
     pipeline.cpp \
     pipeline_builder.cpp \
-    component/queue/queue_pad.cpp \
+    component/queue_pad/queue_pad.cpp \
+    component/simple_pad/simple_pad.cpp \
     logger/logger.cpp \
     logger/printLog.cpp \
     -lyaml-cpp \
@@ -24,21 +25,24 @@ cd ./plugins
 g++ -fPIC -shared invert_filter.cpp \
     -I../core \
     -I../core/component \
-    -I../core/component/queue \
+    -I../core/component/queue_pad \
+    -I../core/component/simple_pad \
     -L../core -lpipeline_core \
     -o libinvert_filter.so
 
 g++ -fPIC -shared sink.cpp \
     -I../core \
     -I../core/component \
-    -I../core/component/queue \
+    -I../core/component/queue_pad \
+    -I../core/component/simple_pad \
     -L../core -lpipeline_core \
     -o lib_sink.so
 
 g++ -fPIC -shared source.cpp \
     -I../core \
     -I../core/component \
-    -I../core/component/queue \
+    -I../core/component/queue_pad \
+    -I../core/component/simple_pad \
     -L../core -lpipeline_core \
     -o lib_source.so
 

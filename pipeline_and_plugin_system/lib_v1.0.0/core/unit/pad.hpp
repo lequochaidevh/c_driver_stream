@@ -21,6 +21,8 @@ class Pad {
 
     virtual bool accept_caps(const Caps&) = 0;
     Caps         caps;
+
+    virtual void set_next(std::function<void(BufferShrPtr)> fn) = 0;
 };
 
 }  // namespace ViPlugsEngine

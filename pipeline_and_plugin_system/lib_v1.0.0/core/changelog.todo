@@ -1,0 +1,22 @@
+
+Add SimplePad (no thread) and test
+
+Source 
+  src: QueuePad   ← async source
+InvertFilter
+  sink: SimplePad
+  src : SimplePad
+Sink
+  sink: SimplePad
+
+OR
+
+Source
+  src: SimplePad
+InvertFilter
+  sink: SimplePad
+  src : QueuePad   ← thread filter
+Sink
+  sink: SimplePad
+
+  => OK - done

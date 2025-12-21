@@ -10,8 +10,8 @@ void Logger::init() {
         "[%Y-%m-%d %H:%M:%S.%e] "  // HH:MM:SS.mmm + custom number
         "[%t]"                     // thread id
         " %^%l "                   // level (color)
-        "[%s:%#] (%!)%$ "          // file:line:function
         "[%n] "                    // logger name
+        "[%s:%#]%$ (%!) "          // file:line:function
         "%v");                     // message
     sCoreLogger = spdlog::stdout_color_mt("ViPlugsEngine");
     sCoreLogger->set_level(spdlog::level::trace);

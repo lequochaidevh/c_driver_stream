@@ -19,8 +19,9 @@ class VIPLUGS_API Logger {
 
     static Shared<spdlog::logger> sClientLogger;
 
- private:
     static Shared<spdlog::logger> sCoreLogger;
+
+ private:
 };
 
 #define LOG_WITH_DETAILS(logger, level, ...) \
