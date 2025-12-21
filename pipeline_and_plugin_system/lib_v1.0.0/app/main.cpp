@@ -9,6 +9,8 @@ using namespace ViPlugsEngine;
 #if (DLL_PLUGINS == YAML)
 int main() {
     PluginRegistry registry;
+
+    LOG_INFO("MAIN INIT");
     registry.scan("../plugins");
 
     std::unique_ptr<Pipeline> pipeline = PipelineBuilder::build_from_yaml("../config/metadata_pipeline.yaml", registry);
@@ -23,17 +25,17 @@ int main() {
         return -1;
     }
 
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 30000; ++i) {
         pipeline.get()->push_frame(std::make_shared<Buffer>(1024));
     }
 
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(15));
 
     pipeline->stop();
     pipeline->shutdown();
 
-    printLog.info("DONE");
-
+    LOG_INFO("DONE");
+    return 1;
     for (int i = 0; i < 50; i++) {
         auto p = PipelineBuilder::build_from_yaml("../config/metadata_pipeline.yaml", registry);
 
@@ -49,7 +51,7 @@ int main() {
         p->shutdown();
     }
 
-    printLog.info("DONE TEST CASE 2");
+    LOG_INFO("DONE TEST CASE 2");
 }
 
 #else

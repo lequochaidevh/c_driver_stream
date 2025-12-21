@@ -11,10 +11,10 @@ class Sink : public Element {
         static_cast<QueuePad*>(sink.get())->debug_element = name() + std::string(" _sink");
     }
 
-    void on_buffer(BufferShrPtr) override { std::cout << " on_buffer Sink got buffer\n"; }
+    void on_buffer(BufferShrPtr) override { LOG_DEBUG("Sink on_buffer"); }
 
     bool init() override {
-        std::cout << "[Sink] init\n";
+        LOG_DEBUG("Sink init");
         return true;
     }
 
@@ -32,7 +32,7 @@ class Sink : public Element {
         return true;
     }
 
-    void shutdown() override { std::cout << "[Sink] shutdown\n"; }
+    void shutdown() override { LOG_DEBUG("Sink shutdown"); }
 
     const char* name() const override { return "Sink"; }
 };

@@ -1,7 +1,8 @@
 #pragma once
-#include "../core/component/element.hpp"
+#include "../core/pipeline_core.hpp"
 #include "../core/component/queue/queue_pad.hpp"
 
+namespace ViPlugsEngine {
 class Filter : public Element {
  public:
     Filter() {
@@ -14,7 +15,7 @@ class Filter : public Element {
     }
 
     bool init() override {
-        CORE_LOG_DEBUG("[QueuePad::push] {} ", debug_element);
+        LOG_DEBUG("Filter init");
         return true;
     }
 
@@ -38,7 +39,9 @@ class Filter : public Element {
         src->push(std::move(buf));
     }
 
-    void shutdown() override { std::cout << "[Filter] shutdown\n"; }
+    void shutdown() override { LOG_DEBUG("Filter shutdown"); }
 
     const char* name() const override { return "Filter"; }
 };
+
+}  // namespace ViPlugsEngine

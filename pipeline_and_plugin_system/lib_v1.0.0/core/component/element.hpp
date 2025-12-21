@@ -24,7 +24,7 @@ class Element {
     virtual const char* name() const = 0;
 
     virtual bool push(BufferShrPtr buf) {
-        printLog.error("ERROR: can not push src to this element");
+        LOG_ERROR("ERROR: can not push src to this element");
         return false;
     };
 

@@ -23,6 +23,7 @@ class QueuePad : public Pad {
     std::atomic<bool>        running{true};
 
     std::function<void(BufferShrPtr)> next;
+    std::size_t                       max_size = 3;
 
  public:
     std::string debug_element;

@@ -26,6 +26,7 @@ class Pipeline {
     bool start();
     bool run_once();
     bool run_once(BufferShrPtr& buf);
+    //  bool is_should_close();
     void shutdown();
     void stop();
 

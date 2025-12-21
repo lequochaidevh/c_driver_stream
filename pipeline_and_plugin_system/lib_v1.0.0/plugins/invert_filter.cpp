@@ -15,7 +15,7 @@ class InvertFilter : public Element {
     }
 
     bool init() override {
-        std::cout << "[InvertFilter] init\n";
+        LOG_DEBUG("InvertFilter init");
         return true;
     }
 
@@ -38,13 +38,12 @@ class InvertFilter : public Element {
     void on_buffer(BufferShrPtr buf) override {
         for (auto& b : buf->data) b = 255 - b;
         // heavy work
-        std::this_thread::sleep_for(std::chrono::milliseconds(33));
-
-        std::cout << "[InvertFilter] on_buffer\n";
+        // std::this_thread::sleep_for(std::chrono::milliseconds(33));
+        LOG_DEBUG("InvertFilter on_buffer");
         src->push(std::move(buf));
     }
 
-    void shutdown() override { std::cout << "[InvertFilter] shutdown\n"; }
+    void shutdown() override { LOG_DEBUG("InvertFilter shutdown"); }
 
     const char* name() const override { return "InvertFilter"; }
 

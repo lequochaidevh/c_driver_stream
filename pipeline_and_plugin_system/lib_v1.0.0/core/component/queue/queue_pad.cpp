@@ -14,7 +14,7 @@ void QueuePad::push(BufferShrPtr buf) {
     {
         std::lock_guard<std::mutex> lk(mtx);
         q.push(buf);
-        CORE_LOG_DEBUG("[QueuePad::push] {} ", debug_element);
+        CORE_LOG_DEBUG("queue of element: {} ", debug_element);
     }
     cv.notify_one();
 }
@@ -24,7 +24,7 @@ void QueuePad::set_next(std::function<void(BufferShrPtr)> fn) { next = std::move
 bool QueuePad::accept_caps(const Caps&) { return true; }
 
 void QueuePad::run() {
-    CORE_LOG_DEBUG("[QueuePad::run] thread start");
+    CORE_LOG_DEBUG("queue thread start");
     while (running) {
         BufferShrPtr buf;
         {
@@ -36,6 +36,7 @@ void QueuePad::run() {
         }
         if (next) next(std::move(buf));
     }
+    CORE_LOG_DEBUG("queue thread close");
 }
 
 }  // namespace ViPlugsEngine

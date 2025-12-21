@@ -12,14 +12,14 @@ class Source : public Element {
 
     bool push(BufferShrPtr buf) {
         src->push(std::move(buf));
-        std::cout << "Source push buffer\n";
+        LOG_DEBUG("Source push");
         return true;
     }
 
     void on_buffer(BufferShrPtr) override {}  // unused
 
     bool init() override {
-        std::cout << "[Source] init\n";
+        LOG_DEBUG("Source init");
         return true;
     }
 
@@ -37,7 +37,7 @@ class Source : public Element {
         return true;
     }
 
-    void shutdown() override { std::cout << "[Source] shutdown\n"; }
+    void shutdown() override { LOG_DEBUG("Source shutdown"); }
 
     const char* name() const override { return "Source"; }
 };

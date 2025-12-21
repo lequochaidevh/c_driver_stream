@@ -1,6 +1,8 @@
 #pragma once
-#include "../core/component/element.hpp"
+#include "../core/pipeline_core.hpp"
 #include "../core/component/queue/queue_pad.hpp"
+
+namespace ViPlugsEngine {
 
 class Source : public Element {
  public:
@@ -11,13 +13,13 @@ class Source : public Element {
 
     bool push(BufferShrPtr buf) {
         src->push(std::move(buf));
-        std::cout << "Source push buffer\n";
+        LOG_DEBUG("Source push");
     }
 
     void on_buffer(BufferShrPtr) override {}  // unused
 
     bool init() override {
-        std::cout << "[Source] init\n";
+        LOG_DEBUG("Source init");
         return true;
     }
 
@@ -35,7 +37,9 @@ class Source : public Element {
         return true;
     }
 
-    void shutdown() override { std::cout << "[Source] shutdown\n"; }
+    void shutdown() override { LOG_DEBUG("Source shutdown"); }
 
     const char* name() const override { return "Source"; }
 };
+
+}  // namespace ViPlugsEngine
