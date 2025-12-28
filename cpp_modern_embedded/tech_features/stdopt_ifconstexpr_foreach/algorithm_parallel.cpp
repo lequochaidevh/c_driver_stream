@@ -8,6 +8,17 @@
 std::execution::seq   //
 std::execution::par   // parallel (multi-thread)
 std::execution::par_unseq // parallel + vectorize
+
+
+|             | par         | par_unseq    |
+| ----------- | ----------- | ------------ |
+| Thread      | ✔           | ✔            |
+| SIMD        | ❌          | ✔            |
+| Atomic      | ✔           | ❌           |
+| Mutex       | ✔           | ❌           |
+| Side-effect | not good    | ❌           |
+| Performance | high        | **HIGHEST**  |
+
  */
 // algorithm(policy, begin, end, ...);
 
