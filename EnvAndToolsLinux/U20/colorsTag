@@ -9,16 +9,31 @@ export RESET="\e[0m"
 export BOLD="\e[1m"
 export UNDERLINE="\e[4m"
 
-parse_git_branch() {
-  git branch 2>/dev/null | grep '*' | sed 's/* //'
-}
-
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 echo ""
 
-DIRSCRIPT=$(dirname "$(readlink -f "$0")")
 source $SCRIPT_DIR/info.sh
 
-#export PS1='\n┌['"${BLUE}${BOLD}\w${RESET}] ${MAGENTA}${UNDERLINE}"'$(printf "%*s" $(( $(tput cols) - ${#PWD} - 18 )) "" | tr " " " " ) '"${RESET}  ${CYAN}${BOLD}$(date +%D-%T) ${RESET}"'\n│\n╰──> '
-export PS1='\n┌['"${BLUE}${BOLD}\w${RESET}] ${MAGENTA}${UNDERLINE}"'$(printf "%*s" $(( $(tput cols) - ${#PWD} - 18 )) "" | tr " " " " ) '"${RESET}  ${YELLOW}( $(parse_git_branch) ) ${RESET}"'\n│\n╰──> '
+# export PS1='\n┌['"${BLUE}${BOLD}\w${RESET}] ${MAGENTA}${UNDERLINE}"'$(printf "%*s" $(( $(tput cols) - ${#PWD} - 18 )) "" | tr " " " " ) '"${RESET}  ${CYAN}${BOLD}$(date +%D-%T) ${RESET}"'\n│\n╰──> '
+# export PS1='\n┌['"${BOLD}${GREEN}\u@ ${BLUE}\w${RESET}] ${MAGENTA}${UNDERLINE}"'$(printf "%*s" $(( $(tput cols) - ${#PWD} - 18 )) "" | tr " " " " ) '"${RESET}  ${YELLOW}( $(git_branch) ) ${RESET}"'\n│\n╰──> '
+
+
+git_branch() {
+    local branch
+    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    if [[ -n "$branch" ]]; then
+        echo "$branch"
+    fi
+}
+
+set_prompt() {
+    local cols=$(tput cols)
+    local pwd_len=${#PWD}
+    local padding_len=$((cols - pwd_len - 30))
+    local padding=$(printf "%*s" "$padding_len" "" | tr " " " ")
+
+    PS1="\n┌[${BOLD}${GREEN}\u@ ${BLUE}\w${RESET}] ${MAGENTA}${UNDERLINE}${padding}${RESET}  ${YELLOW}( $(git_branch) )${RESET}\n│\n╰──> "
+}
+
+PROMPT_COMMAND=set_prompt
