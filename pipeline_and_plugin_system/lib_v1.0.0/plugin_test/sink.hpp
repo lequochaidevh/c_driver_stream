@@ -1,6 +1,6 @@
 #pragma once
 #include "../core/pipeline_core.hpp"
-#include "../core/component/queue/queue_pad.hpp"
+#include "../core/component/queue_pad/queue_pad.hpp"
 
 namespace ViPlugsEngine {
 
