@@ -1,0 +1,24 @@
+export RED="\e[31m"
+export GREEN="\e[32m"
+export YELLOW="\e[33m"
+export BLUE="\e[34m"
+export MAGENTA="\e[35m"
+export CYAN="\e[36m"
+export WHITE="\e[37m"
+export RESET="\e[0m"
+export BOLD="\e[1m"
+export UNDERLINE="\e[4m"
+
+parse_git_branch() {
+  git branch 2>/dev/null | grep '*' | sed 's/* //'
+}
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+
+echo ""
+
+DIRSCRIPT=$(dirname "$(readlink -f "$0")")
+source $SCRIPT_DIR/info.sh
+
+#export PS1='\n┌['"${BLUE}${BOLD}\w${RESET}] ${MAGENTA}${UNDERLINE}"'$(printf "%*s" $(( $(tput cols) - ${#PWD} - 18 )) "" | tr " " " " ) '"${RESET}  ${CYAN}${BOLD}$(date +%D-%T) ${RESET}"'\n│\n╰──> '
+export PS1='\n┌['"${BLUE}${BOLD}\w${RESET}] ${MAGENTA}${UNDERLINE}"'$(printf "%*s" $(( $(tput cols) - ${#PWD} - 18 )) "" | tr " " " " ) '"${RESET}  ${YELLOW}( $(parse_git_branch) ) ${RESET}"'\n│\n╰──> '

@@ -1,0 +1,15 @@
+sudo apt install bat
+
+sudo snap install git-delta-snap
+git config --global core.pager "git-delta-snap.delta"
+git config --global interactive.diffFilter "git-delta-snap.delta --color-only"
+git config --global delta.side-by-side true
+git config --global delta.line-numbers true # Show line numbers in diffs
+
+#git config --global delta.navigate true    # Use n and N to move between files
+#git config --global merge.conflictstyle zdiff3
+
+
+bashrc:
+alias gitdiff='git diff | git-delta-snap.delta --side-by-side'
+
