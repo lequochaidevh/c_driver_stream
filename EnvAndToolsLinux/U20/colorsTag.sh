@@ -27,13 +27,18 @@ git_branch() {
     fi
 }
 
+export PS1_FIXED=1
+
 set_prompt() {
     local cols=$(tput cols)
     local pwd_len=${#PWD}
-    local padding_len=$((cols - pwd_len - 30))
+    local endcmd="${YELLOW}($(git_branch)) ${CYAN}$(date +%D-%T)${RESET}"
+    local endcmd_len=${#endcmd}
+    local padding_len=$((cols - pwd_len - endcmd_len + 10))
     local padding=$(printf "%*s" "$padding_len" "" | tr " " " ")
-
-    PS1="\n┌[${BOLD}${GREEN}\u@ ${BLUE}\w${RESET}] ${MAGENTA}${UNDERLINE}${padding}${RESET}  ${YELLOW}( $(git_branch) )${RESET}\n│\n╰──> "
+    if [ ${PS1_FIXED} -ne 0 ]; then
+	PS1="\n┌[${BOLD}${GREEN}\u@ ${BLUE}\w${RESET}] ${WHITE}${UNDERLINE}${padding}${RESET} ${endcmd}\n│\n╰──> "
+    fi
 }
 
 PROMPT_COMMAND=set_prompt
