@@ -33,11 +33,40 @@ set_prompt() {
     local cols=$(tput cols)
     local pwd_len=${#PWD}
     local endcmd="${YELLOW}($(git_branch)) ${CYAN}$(date +%D-%T)${RESET}"
-    local endcmd_len=${#endcmd}
-    local padding_len=$((cols - pwd_len - endcmd_len + 10))
+
+    clean_color_endcmd=$(echo -e "$endcmd" | perl -pe 's/\e\[[0-9;]*[mK]//g')
+    local endcmd_len=${#clean_color_endcmd}
+
+    # space 15
+    endcmd_len=$((endcmd_len + 15))
+
+    local path_wrk="\w"
+    local path_full_wrk=""
+
+    # Short path if path_working long more than cols
+    if ((cols < (pwd_len + endcmd_len))); then
+        path_wrk="\W"
+        pwd_len=$(basename "$PWD")
+        pwd_len=${#pwd_len}
+        local path_full_wrk="\n\w"
+    fi
+
+    local padding_len=$((cols - pwd_len - endcmd_len))
+
+    # TODO no tuning - no hardcode
+    # if ((padding_len < 10 )) && (( padding_len > 1 )); then
+    #     padding_len=6
+    # el
+
+    if ((padding_len < 1)); then
+        # padding_len=$((cols - pwd_len - 3))
+        endcmd="\n│ ${YELLOW}($(git_branch)) ${CYAN}$(date +%D-%T)${RESET}"
+    fi
+
     local padding=$(printf "%*s" "$padding_len" "" | tr " " " ")
+
     if [ ${PS1_FIXED} -ne 0 ]; then
-	PS1="\n┌[${BOLD}${GREEN}\u@ ${BLUE}\w${RESET}] ${WHITE}${UNDERLINE}${padding}${RESET} ${endcmd}\n│\n╰──> "
+	    PS1="${path_full_wrk}\n┌[${BOLD}${GREEN}\u@ ${BLUE}${path_wrk}${RESET}] ${WHITE}${UNDERLINE}${padding}${RESET} ${endcmd}\n│\n╰──> "
     fi
 }
 
