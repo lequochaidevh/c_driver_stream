@@ -1,0 +1,7 @@
+Phase 1: naive loop, will replace by:
+
+BLAS
+
+SIMD
+
+multithread
