@@ -10,5 +10,4 @@ vendor_build/
 *.creator.user
 tmp/
 test*
-.vscode
 private_files/
