@@ -15,6 +15,7 @@ class Tensor {
     Shape                      shape;
     DType                      dtype;
     std::unique_ptr<uint8_t[]> data;
+    size_t                     numberOfElement() const { return shape.rows * shape.cols; }
 
     Tensor(Shape s, DType t) : shape(s), dtype(t), data(new uint8_t[s.rows * s.cols * dtype_size(t)]) {}
 

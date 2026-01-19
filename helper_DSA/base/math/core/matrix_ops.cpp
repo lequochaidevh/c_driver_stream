@@ -9,14 +9,84 @@ Matrix add(const Matrix& A, const Matrix& B) {
     Matrix C(A.rows(), A.cols());
 
     Op op{OpType::Add, &A.tensor(), &B.tensor(), &C.tensor()};
+
+    cpu.execute(op);
+    return C;
+}
+
+Matrix sub(const Matrix& A, const Matrix& B) {
+    Matrix C(A.rows(), A.cols());
+
+    Op op{OpType::Sub, &A.tensor(), &B.tensor(), &C.tensor()};
+
     cpu.execute(op);
     return C;
 }
 
 Matrix multi(const Matrix& A, const Matrix& B) {
-    Matrix C(A.rows(), B.cols());
+    Matrix C(A.rows(), A.cols());
 
     Op op{OpType::Multi, &A.tensor(), &B.tensor(), &C.tensor()};
+
+    cpu.execute(op);
+    return C;
+}
+
+Matrix div(const Matrix& A, const Matrix& B) {
+    Matrix C(A.rows(), A.cols());
+
+    Op op{OpType::Div, &A.tensor(), &B.tensor(), &C.tensor()};
+
+    cpu.execute(op);
+    return C;
+}
+
+Matrix matmul(const Matrix& A, const Matrix& B) {
+    Matrix C(A.rows(), B.cols());
+
+    Op op{OpType::MatMul, &A.tensor(), &B.tensor(), &C.tensor()};
+
+    cpu.execute(op);
+    return C;
+}
+
+Matrix scale(const Matrix& A, float alpha) {
+    Matrix C(A.rows(), A.cols());
+
+    Op op{
+        OpType::Scale, &A.tensor(),
+        nullptr,  // not use B
+        &C.tensor(),
+        alpha  // scalar
+    };
+
+    cpu.execute(op);
+    return C;
+}
+
+Matrix exp(const Matrix& A) {
+    Matrix C(A.rows(), A.cols());
+
+    Op op{OpType::Exp, &A.tensor(), nullptr, &C.tensor()};
+
+    cpu.execute(op);
+    return C;
+}
+
+Matrix log(const Matrix& A) {
+    Matrix C(A.rows(), A.cols());
+
+    Op op{OpType::Log, &A.tensor(), nullptr, &C.tensor()};
+
+    cpu.execute(op);
+    return C;
+}
+
+Matrix sqrt(const Matrix& A) {
+    Matrix C(A.rows(), A.cols());
+
+    Op op{OpType::Sqrt, &A.tensor(), nullptr, &C.tensor()};
+
     cpu.execute(op);
     return C;
 }
