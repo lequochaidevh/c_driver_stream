@@ -7,6 +7,7 @@
 using namespace math;
 
 void prinf_mat(const Matrix& C);
+void prinf_mat_tensor(const Matrix& C);
 
 int main() {
     Matrix A(2, 3);
@@ -90,6 +91,18 @@ int main() {
     Matrix _MatMul_ = matmul(M1, M2);
     prinf_mat(_MatMul_);
 
+    std::cout << "\nM1:\n";
+    M1.tensor().transpose();
+    prinf_mat_tensor(M1);
+
+    M2.tensor().transpose();
+    std::cout << "\nM2:\n";
+    prinf_mat(M2);
+
+    std::cout << "\n _MatMul_:\n";
+    Matrix _MatMul2_ = matmul(M1, M2);
+    prinf_mat(_MatMul2_);
+
     return 0;
 }
 
@@ -97,6 +110,9 @@ int main() {
 
 void prinf_mat(const Matrix& C) {
     // test result
+    std::cout << "rows = " << C.rows() << "\n";
+    std::cout << "cols = " << C.cols() << "\n";
+
     for (size_t i = 0; i < C.rows(); i++) {
         for (size_t j = 0; j < C.cols(); j++) {
             std::cout << C.data()[i * C.cols() + j] << " ";
@@ -105,5 +121,18 @@ void prinf_mat(const Matrix& C) {
     }
     std::cout << "\n";
 }
+
+void prinf_mat_tensor(const Matrix& C) {
+    std::cout << "rows = " << C.rows() << "\n";
+    std::cout << "cols = " << C.cols() << "\n";
+
+    for (size_t i = 0; i < C.rows(); i++) {
+        for (size_t j = 0; j < C.cols(); j++) {
+            std::cout << C.tensor().at(i, j) << " ";
+        }
+        std::cout << "\n";
+    }
+}
 // export CPP_LIST=$(find . -name "*.cpp") &&  g++ -std=c++17 $CPP_LIST -I"$(pwd)/math" -o test
 // -O3 -march=native -ffast-math -fopenmp
+//

@@ -38,7 +38,7 @@ Matrix sqrt(const Matrix& A);
 
 struct Matrix::Impl {
     Tensor tensor;
-    Impl(size_t r, size_t c) : tensor({r, c}, DType::F32) {}
+    Impl(size_t r, size_t c) : tensor(r, c, DType::F32) {}
 };
 
 struct MatrixView {
