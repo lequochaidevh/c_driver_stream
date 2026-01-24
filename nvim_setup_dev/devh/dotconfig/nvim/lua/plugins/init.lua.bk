@@ -1,0 +1,4 @@
+require("lazy").setup({
+  require("plugins.catppuccin"),
+  require("plugins.nvimtree")
+})

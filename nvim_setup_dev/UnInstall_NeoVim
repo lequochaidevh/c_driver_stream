@@ -1,0 +1,18 @@
+
+
+---
+sudo apt uninstall nvim
+# clean up
+---
+# Remove config
+
+Unstow
+
+# stow -D nvim
+
+cd ~/.config 
+ls
+
+# remove plugin
+rm -rf ~/.local/share/nvim
+rm -rf ~/.cache/nvim
