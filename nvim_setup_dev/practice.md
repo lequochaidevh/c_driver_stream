@@ -40,5 +40,21 @@ or: :s/^/"string"/
 
 delete: norm xx : remove 2 charactor
 
+### Replace string at line
+:s/old/new/g : replace all old string by new. can add gc to pick y/n.
+:s/old/new/ : replace first string.
 
+
+### Replace string all file.
+:%s/old/new/g : replace old by new string all file.
+
+### Replace with visual mode
+v and choice string
+:s/old/new/g
+
+**Note:** i : upcase and lowcase (ignore case)
+**Ex:** Replace Enter
+```sh
+:%s/\n/ \\n /g
+```
 
