@@ -1,7 +1,3 @@
-
--- Plug 'nvim-tree/nvim-tree.lua'
--- Plug 'nvim-tree/nvim-web-devicons'
-
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
@@ -9,12 +5,36 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
-      "nvim-tree/nvim-web-devicons", -- optional, but recommended
+      "nvim-tree/nvim-web-devicons",
     },
-    lazy = false, -- neo-tree will lazily load itself
-    config = function() 
-      vim.keymap.set("n", "<leader>v", "<cmd>Neotree filesystem reveal left<CR>", { desc = "NeoTree reveal" })
-      vim.keymap.set("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Toggle NvimTree" })
+    lazy = false,
+
+    config = function()
+      require("neo-tree").setup({
+        filesystem = {
+          filtered_items = {
+            visible = true,          -- QUAN TRỌNG
+            hide_dotfiles = false,   -- hiện file .xxx
+            hide_gitignored = false, -- hiện file gitignore
+          },
+        },
+      })
+
+      -- Keymaps
+      vim.keymap.set(
+        "n",
+        "<leader>v",
+        "<cmd>Neotree filesystem reveal left<CR>",
+        { desc = "NeoTree reveal" }
+      )
+
+      vim.keymap.set(
+        "n",
+        "<C-b>",
+        "<cmd>Neotree toggle<CR>",
+        { desc = "Toggle NeoTree" }
+      )
     end,
-  }
+  },
 }
+

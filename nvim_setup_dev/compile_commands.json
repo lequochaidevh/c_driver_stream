@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/home/devh/linux_std/c_driver_stream/nvim_setup_dev",
+    "command": "clang++ -std=c++17 -Iinclude -Iinclude/hiType -Isrc -Ithird_party/common -c src/main.cpp",
+    "file": "hellworld.cpp"
+  }
+]

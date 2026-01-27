@@ -28,7 +28,11 @@ colorscheme nightfox
 " Nvim-tree setup
 " ======================
 lua << EOF
-require("nvim-tree").setup({})
+require("nvim-tree").setup({
+  filters = {
+    dotfiles = false,   -- QUAN TRỌNG
+  },
+})
 
 require('telescope').setup{}
 EOF

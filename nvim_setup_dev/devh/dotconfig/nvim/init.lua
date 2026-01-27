@@ -15,7 +15,7 @@ require("core.globals")
 require("core.vim-options")
 require("core.keymaps")
 require("core.autocmds")
-require("core.mapbufline")
+-- require("core.mapbufline")
 
 vim.opt.rtp:prepend(lazypath)
 

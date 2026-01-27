@@ -3,3 +3,6 @@
 # Plugin
 
 # Plugin manager: lazy
+#
+# Install app package
+# sudo apt install -y xclip xsel

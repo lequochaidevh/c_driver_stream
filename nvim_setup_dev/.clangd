@@ -1,0 +1,17 @@
+CompileFlags:
+  Add:
+    - -Iinclude
+    - -Iinclude/hiType
+    - -Isrc
+    - -Ithird_party/common
+    - -std=c++17
+  Remove:
+    - -Werror
+
+Diagnostics:
+  Suppress:
+    - unused-includes
+
+Index:
+  Background: Build
+

@@ -6,7 +6,7 @@ return {
     config = function()
       require("catppuccin").setup({
         flavour = "mocha",
-        transparent_background = true,
+        transparent_background = false,
         show_end_of_buffer = false,
         term_colors = true,
         integrations = {
@@ -19,11 +19,11 @@ return {
       vim.cmd.colorscheme("catppuccin-mocha")
 
       -- ép highlight SAU colorscheme
-      local hl = vim.api.nvim_set_hl
-      hl(0, "Normal", { bg = "none" })
-      hl(0, "NormalFloat", { bg = "none" })
-      hl(0, "SignColumn", { bg = "none" })
-      hl(0, "EndOfBuffer", { bg = "none" })
+      -- local hl = vim.api.nvim_set_hl
+      -- hl(0, "Normal", { bg = "none" })
+      -- hl(0, "NormalFloat", { bg = "none" })
+      -- hl(0, "SignColumn", { bg = "none" })
+      -- hl(0, "EndOfBuffer", { bg = "none" })
     end,
   },  
 }
