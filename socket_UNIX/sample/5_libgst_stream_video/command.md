@@ -43,7 +43,7 @@ gst-launch-1.0 v4l2src device=/dev/video0 ! image/jpeg,width=1280,height=720,fra
 gst-launch-1.0 -e v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! videoconvert ! avenc_mpeg4 bitrate=2000000 ! mp4mux ! filesink location=output_mpeg4.mp4
 gst-launch-1.0 -e v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! videoconvert ! avenc_mpeg4 bitrate=2000000 ! matroskamux ! filesink location=output_mpeg4.mkv
 
-
+sudo modprobe v4l2loopback video_nr=2,7,9 card_label="Loopback2","Loopback7","Loopback9" exclusive_caps=1
 
 
 gst-launch-1.0 -e v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=1280,height=720,framerate=30/1 ! videoconvert ! avenc_mpeg4 bitrate=2000000 ! jpegparse ! rtpjpegpay ! udpsink host=127.0.0.1 port=5000
