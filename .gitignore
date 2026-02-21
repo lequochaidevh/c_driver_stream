@@ -12,3 +12,5 @@ tmp/
 test*
 private_files/
 coc.vim
+coc.nvim/
+.vimrc
