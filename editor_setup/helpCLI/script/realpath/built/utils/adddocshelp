@@ -18,6 +18,8 @@ if [ ! -z "$2" ]; then
     DES_COPPY="$DES_COPPY/$2"
     have_file_exists_unexpected "$DES_COPPY/$FILLE_SRC"
 fi
+ # TODO add exception for folder with file exit 1 param
+ # add else -> add ls to array -> check all file
 
 
 cp -rf $FILLE_SRC $DES_COPPY
