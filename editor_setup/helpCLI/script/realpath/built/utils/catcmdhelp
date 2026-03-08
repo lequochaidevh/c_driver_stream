@@ -1,0 +1,20 @@
+#!/bin/bash
+
+DES=$(cat  /usr/local/bin/docs_dir.txt)
+
+if [ -z "$TOOL_CAT" ]; then
+    TOOL_CAT=cat
+fi
+
+if [ -z "$1" ]; then
+    FOLDER=.
+elif [ "$1" == "--list" ]; then
+    ls $DES
+    exit
+else
+    FOLDER=$1
+fi
+
+cd $(cat  /usr/local/bin/docs_dir.txt)
+
+find $FOLDER -type f \( -name "*.md" -o -name "*.txt" \) -exec $TOOL_CAT {} +

@@ -1,0 +1,9 @@
+### git command
+git -am : add and commit
+
+git pull origin main --allow-unrelated-histories
+
+git remote set-url origin https://github.com/lequochaidevh/ViSolEngine.git
+git submodule add https://github.com/glfw/glfw.git
+git reset --soft HEAD~1
+git submodule update --init --recursive

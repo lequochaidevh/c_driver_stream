@@ -1,0 +1,20 @@
+#!/bin/bash
+
+DES_COPPY=$(cat  /usr/local/bin/docs_dir.txt)
+
+if [ -z "$1" ]; then
+    LOG_ERROR "Need param contain file .txt or .md to copy"
+    exit 0
+elif [ "$1" == "--list" ]; then
+    ls $DES_COPPY
+    exit
+else
+    FILLE_SRC=$1
+fi
+
+if [ -z "$2" ]; then
+    DES_COPPY=$DES_COPPY/$2
+fi
+
+
+cp -rf $FILLE_SRC $DES_COPPY
