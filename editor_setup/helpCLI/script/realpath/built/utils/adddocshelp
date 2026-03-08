@@ -1,20 +1,24 @@
-#!/bin/bash
+#!/bin/bash -e
 
 DES_COPPY=$(cat  /usr/local/bin/docs_dir.txt)
+
+. "$DES_COPPY/../script/realpath/lib.sh" #func helper
 
 if [ -z "$1" ]; then
     LOG_ERROR "Need param contain file .txt or .md to copy"
     exit 0
 elif [ "$1" == "--list" ]; then
     ls $DES_COPPY
-    exit
+    exit 0
 else
     FILLE_SRC=$1
 fi
 
-if [ -z "$2" ]; then
-    DES_COPPY=$DES_COPPY/$2
+if [ ! -z "$2" ]; then
+    DES_COPPY="$DES_COPPY/$2"
+    have_file_exists_unexpected "$DES_COPPY/$FILLE_SRC"
 fi
 
 
 cp -rf $FILLE_SRC $DES_COPPY
+LOG_SUCCESS "coppy file from $FILLE_SRC to $DES_COPPY"

@@ -55,7 +55,7 @@ printf_var() {
     local var_name="$1"
     local var_value="${!var_name}"
     if [ -z "$var_value" ]; then
-        echo -e "${YELLOW}WARNING: Variable '$var_name' is not set.${NC}"
+        LOG_WARN "Variable '$var_name' is not set."
     else
         printf "${GREEN}${BOLD}%-50s${CYAN}${BOLD}%s${ENDLINE}${NC}\n" "$var_name" "$var_value"
     fi
@@ -77,25 +77,33 @@ set_default_if_not_exist() {
 
     if [ -z "${!var_name}" ]; then
         export "$var_name"="$default_val"
-        echo "➜ $var_name set to default: ${!var_name}"
+        LOG_DEBUG "➜ $var_name set to default: ${!var_name}"
     else
-        echo "➜ $var_name existing: ${!var_name}"
+        LOG_DEBUG "➜ $var_name existing: ${!var_name}"
     fi
 }
 
 check_file_exists() {
+    # expect : file exist before
     _validate_require_param "$1" || return 1
     local FILE_PATH="$1"
-    
-    if [[ -z "$FILE_PATH" ]]; then
-        echo "Error: No file path provided to check_file_exists function."
-        return 1
-    fi
 
     if [[ -f "$FILE_PATH" ]]; then
-        echo "Successfully located: $FILE_PATH"
+        LOG_SUCCESS "Successfully located: $FILE_PATH"
     else
-        echo "'$FILE_PATH' not found."
+        LOG_ERROR "'$FILE_PATH' not found."
+    fi
+}
+
+have_file_exists_unexpected() {
+    _validate_require_param "$1" || return 1
+    local FILE_PATH="$1"
+
+    if [[ -f "$FILE_PATH" ]]; then
+        LOG_ERROR "File exist at located: $FILE_PATH"
+        exit 0;
+    else
+        LOG_INFO "'$FILE_PATH' not found."
     fi
 }
 

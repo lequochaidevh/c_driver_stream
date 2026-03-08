@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/bin/bash -e
 
 DES=$(cat  /usr/local/bin/docs_dir.txt)
+
+. "$DES/../script/realpath/lib.sh" # function helper
 
 if [ -z "$TOOL_CAT" ]; then
     TOOL_CAT=cat
