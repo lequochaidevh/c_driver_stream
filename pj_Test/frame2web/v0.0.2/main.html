@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Streaming + Overlay</title>
+
+<style>
+body {
+    background:#222;
+    color:#fff;
+    font-family:sans-serif;
+    text-align:center;
+}
+
+.container {
+    position: relative;
+    width: 640px;
+    height: 480px;
+    margin: auto;
+}
+
+video, canvas {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Realtime Overlay System</h2>
+
+<div>
+    <label>Enable AI</label>
+    <input type="checkbox" id="enableAI">
+</div>
+
+<div class="container">
+    <video id="cam" autoplay playsinline></video>
+    <canvas id="overlay"></canvas>
+</div>
+
+<pre id="log"></pre>
+
+<script src="overlayLib.js"></script>
+
+<script>
+
+// ---------------- DOM ----------------
+const video = document.getElementById("cam");
+const canvas = document.getElementById("overlay");
+const ctx = canvas.getContext("2d");
+const log = document.getElementById("log");
+
+// ---------------- STATE ----------------
+let boxes = [];
+let enableAI = false;
+
+// ---------------- CONTROL ----------------
+document.getElementById("enableAI").onchange = (e) => {
+    enableAI = e.target.checked;
+};
+
+// ---------------- WEBCAM ----------------
+async function startCam() {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+    video.srcObject = stream;
+    await video.play();
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    render();
+}
+
+// ---------------- RENDER ----------------
+function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (enableAI) {
+        OverlayLib.drawBoxes(ctx, canvas, boxes, true);
+    }
+
+    requestAnimationFrame(render);
+}
+
+// ---------------- WS ----------------
+const ws = new WebSocket("ws://localhost:9000");
+
+ws.onopen = () => console.log("WS connected");
+
+ws.onmessage = (msg) => {
+    // console.log("RAW:", msg.data); 
+    const data = JSON.parse(msg.data);
+
+    if (data.boxes) {
+        boxes = data.boxes;
+    }
+
+    log.textContent = JSON.stringify(data, null, 2);
+};
+
+// ---------------- START ----------------
+startCam();
+
+</script>
+
+</body>
+</html>

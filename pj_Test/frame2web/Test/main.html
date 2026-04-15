@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Control + Webcam</title>
+<style>
+body { font-family:sans-serif; background:#2c3e50; color:#ecf0f1; text-align:center; padding:20px; }
+.control-group { margin:15px 0; }
+button, input[type=range] { padding:8px 15px; border-radius:6px; border:none; cursor:pointer; background:#3498db; color:#fff; }
+button:hover { background:#2980b9; }
+video { border:4px solid #4CAF50; border-radius:10px; margin-top:20px; width:640px; height:480px; }
+</style>
+</head>
+<body>
+
+<h1>Control Panel + Webcam</h1>
+
+<div class="control-group">
+    <label for="myButton">Button:</label>
+    <button id="myButton">Click Me</button>
+</div>
+
+<div class="control-group">
+    <label for="mySlider">Slider:</label>
+    <input type="range" id="mySlider" min="0" max="100" value="50">
+    <span id="sliderValue">50</span>
+</div>
+
+<div class="control-group">
+    <label for="mySwitch">Switch:</label>
+    <input type="checkbox" id="mySwitch">
+</div>
+
+<div class="control-group">
+    <button id="loadJson">Load JSON</button>
+    <input type="file" id="fileInput" accept=".json" style="display:none">
+    <button id="saveJson">Save JSON</button>
+</div>
+
+<video id="cam" autoplay playsinline></video>
+
+<script src="controlLibWithCam.js"></script>
+<script>
+controlLib.addButton("myButton", () => alert("Button clicked!"));
+controlLib.addSlider("mySlider", "sliderValue");
+controlLib.addSwitch("mySwitch");
+
+// JSON Load / Save
+const fileInput = document.getElementById('fileInput');
+document.getElementById('loadJson').addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => {
+    controlLib.loadJsonFromFile(fileInput).catch(err => alert("Error: " + err));
+});
+document.getElementById('saveJson').addEventListener('click', () => controlLib.saveJsonToFile("config.json"));
+
+// Open webcam (VirtualCam / camera mặc định)
+const videoEl = document.getElementById('cam');
+// Nếu muốn deviceId cụ thể, set options: {deviceId: "xxxxxxxx"}
+controlLib.startWebcam(videoEl).catch(err => alert("Không thể mở webcam: " + err.message));
+</script>
+
+</body>
+</html>

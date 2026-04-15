@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>VirtualCam Viewer</title>
+<style>
+    /* Reset cơ bản */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #1f1c2c, #928dab);
+        color: #fff;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        font-size: 2.2rem;
+        text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+    }
+
+    video {
+        width: 720px;
+        height: 540px;
+        border: 6px solid #4CAF50;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        background: #000;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    video:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 45px rgba(0,0,0,0.7);
+    }
+
+    #status {
+        margin-top: 15px;
+        font-size: 1rem;
+        color: #ffd700;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    }
+
+    button {
+        margin-top: 20px;
+        padding: 10px 25px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 8px;
+        background: #4CAF50;
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+        background: #45a049;
+        transform: scale(1.05);
+    }
+</style>
+</head>
+<body>
+
+<h1>VirtualCam Live Stream</h1>
+<video id="cam" autoplay playsinline></video>
+<p id="status">Đang kết nối webcam...</p>
+<button id="refresh">Khởi động lại webcam</button>
+
+<script>
+async function startCam() {
+    const statusEl = document.getElementById('status');
+    const videoEl = document.getElementById('cam');
+
+    try {
+        statusEl.textContent = "Đang mở webcam...";
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoEl.srcObject = stream;
+        statusEl.textContent = "Webcam đã kết nối!";
+    } catch (err) {
+        console.error("Không thể mở webcam:", err);
+        statusEl.textContent = "Không thể mở webcam: " + err.message;
+    }
+}
+
+// Khởi động khi load
+startCam();
+
+// Nút refresh để thử lại
+document.getElementById('refresh').addEventListener('click', () => {
+    startCam();
+});
+</script>
+
+</body>
+</html>

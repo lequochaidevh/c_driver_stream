@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Virtual Camera Viewer</title>
+    <style>
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: #222; 
+            color: #fff; 
+            flex-direction: column; 
+        }
+        video { 
+            width: 640px; 
+            height: 480px; 
+            border: 3px solid #4CAF50; 
+            border-radius: 5px; 
+            background: black; 
+        }
+        p { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Live Video từ VirtualCam (/dev/video2)</h2>
+    <video id="cam" autoplay playsinline></video>
+    <p id="status">Đang tìm webcam ảo...</p>
+
+    <script>
+    async function startVirtualCam() {
+        const statusEl = document.getElementById('status');
+        try {
+            // Lấy danh sách camera
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoInput = devices.find(d => 
+                d.kind === 'videoinput' && d.label.includes('VirtualCam')
+            );
+
+            if (!videoInput) {
+                statusEl.textContent = "Không tìm thấy webcam ảo (/dev/video2). Kiểm tra v4l2loopback và gst-launch.";
+                return;
+            }
+
+            // Lấy video stream từ webcam ảo
+            const stream = navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+                    document.getElementById('cam').srcObject = stream;
+                }).catch(err => {
+                    console.error("Không thể mở webcam:", err);
+                });
+
+            const videoEl = document.getElementById('cam');
+            videoEl.srcObject = stream;
+            statusEl.textContent = "Đang hiển thị video từ webcam ảo!";
+        } catch (err) {
+            console.error(err);
+            statusEl.textContent = "Lỗi khi mở webcam ảo: " + err.message;
+        }
+    }
+
+    // Bắt đầu
+    startVirtualCam();
+    </script>
+</body>
+</html>
