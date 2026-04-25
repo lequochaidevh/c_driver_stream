@@ -1,0 +1,13 @@
+static bool            is_mutex_init = false;
+void core_system_lock_init() {
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    // Allow lock (Recursive) to advoid Deadlock
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&kernel_mutex, &attr);
+    pthread_mutexattr_destroy(&attr);
+    is_mutex_init = true;
+}
+if (!is_mutex_init) {
+    // core_system_lock_init();
+}
