@@ -10,3 +10,12 @@
 [submodule "third_party/vendors_lab/gst-rtsp-server"]
 	path = third_party/vendors_lab/gst-rtsp-server
 	url = https://github.com/GStreamer/gst-rtsp-server.git
+[submodule "third_party/vendors_lab/HighPower-Mechaduino"]
+	path = third_party/vendors_lab/motor_control/HighPower-Mechaduino
+	url = https://github.com/pointhi/HighPower-Mechaduino.git
+[submodule "third_party/vendors_lab/Mechaduino-Firmware"]
+	path = third_party/vendors_lab/motor_control/Mechaduino-Firmware
+	url = https://github.com/jcchurch13/Mechaduino-Firmware.git
+[submodule "third_party/vendors_lab/ArduinoTutorials"]
+	path = third_party/vendors_lab/motor_control/ArduinoTutorials
+	url = https://github.com/curiores/ArduinoTutorials.git
