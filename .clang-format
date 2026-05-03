@@ -21,3 +21,23 @@ AlignEscapedNewlines: Left
 AlignTrailingComments: true
 AlignOperands: true
 IndentPPDirectives: None
+##############################################
+
+Language: JavaScript
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 80
+
+IndentPPDirectives: AfterHash
+
+AccessModifierOffset: -3
+
+NamespaceIndentation: Inner
+
+AlignConsecutiveAssignments: true
+AlignConsecutiveMacros: true
+AlignConsecutiveDeclarations: true
+AlignEscapedNewlines: Left
+AlignTrailingComments: true
+AlignOperands: true
+IndentPPDirectives: None
