@@ -1,4 +1,5 @@
-// g++ example/main.cpp -std=c++17 -lpthread && ./a.out
+// mkdir build/
+// g++ example/main.cpp -std=c++17 -lpthread -o build/basic_test && ./build/basic_test
 #include "../smart_file_description.h"
 #include <assert.h>
 
@@ -62,7 +63,7 @@ int main() {
     // ------------------------------------------------------------------------
     std::cout << "[TEST 1] Testing UniqueFileDescription...\n";
     {
-        UniqueFileDescription<FilePolicy> u1(LinuxArgs{}, "unique_test.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+        UniqueFileDescription<FilePolicy> u1(LinuxArgs{}, "build/unique_test.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
         assert(u1.get() >= 0 && "UniqueFileDescription failed to open file");
         
         // Transfer ownership via move constructor
@@ -80,7 +81,7 @@ int main() {
     // ------------------------------------------------------------------------
     std::cout << "[TEST 2] Testing SharedFileDescription Multi-threaded I/O Lock...\n";
     {
-        SharedFileDescription<FilePolicy> shared_log(LinuxArgs{}, "io_isolation_test.log", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+        SharedFileDescription<FilePolicy> shared_log(LinuxArgs{}, "build/io_isolation_test.log", O_CREAT | O_WRONLY | O_TRUNC, 0644);
         assert(shared_log && "SharedFileDescription failed to open test file");
 
         const int num_threads = 8;
@@ -105,7 +106,7 @@ int main() {
     // ------------------------------------------------------------------------
     std::cout << "[TEST 3] Testing Static Registry Lock-Free High Contention CAS...\n";
     {
-        SharedFileDescription<FilePolicy> shared_stress(LinuxArgs{}, "registry_stress.log", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+        SharedFileDescription<FilePolicy> shared_stress(LinuxArgs{}, "build/registry_stress.log", O_CREAT | O_WRONLY | O_TRUNC, 0644);
         size_t initial_count = shared_stress.use_count();
         assert(initial_count == 1 && "Initial ownership count must be exactly 1");
 
@@ -135,7 +136,7 @@ int main() {
     // ------------------------------------------------------------------------
     std::cout << "[TEST 4] Testing Unique-to-Shared Conversion...\n";
     {
-        UniqueFileDescription<FilePolicy> unique_source(LinuxArgs{}, "conversion_test.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+        UniqueFileDescription<FilePolicy> unique_source(LinuxArgs{}, "build/conversion_test.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
         int native_fd = unique_source.get();
         
         // Convert by moving Unique into Shared constructor
