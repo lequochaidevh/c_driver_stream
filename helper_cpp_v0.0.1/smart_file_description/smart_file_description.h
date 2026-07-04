@@ -1,6 +1,5 @@
 #pragma once
 #include "sfd_policy.h"
-#include "sfd_linux_api.h"
 #include "sfd_session_guard.h"
 
 // --- COMPILE-TIME TAG TO FORCE LINUX SYSTEM CALL PATH ---

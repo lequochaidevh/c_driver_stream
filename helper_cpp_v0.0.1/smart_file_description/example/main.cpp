@@ -1,5 +1,5 @@
 // g++ example/main.cpp -std=c++17 -lpthread && ./a.out
-#include "../sfd_RAII_helper.h"
+#include "../smart_file_description.h"
 #include <assert.h>
 
 // ============================================================================
@@ -18,24 +18,32 @@ void shared_concurrency_worker(SharedFileDescription<FilePolicy> shared_desc, in
         std::string part1 = thread_identity + " iter " + std::to_string(i);
         
         // Clean text string block without any special characters
-        std::string part2 = " : Executing critical section uninterrupted.\n";
+        std::string part2 = " : " + thread_identity + " : Executing critical section uninterrupted.\n";
         
         // Write the first block
         session.write(part1.c_str(), part1.length());
-        
-        // Force the thread to sleep while holding the lock to test thread-isolation
-        std::this_thread::sleep_for(std::chrono::microseconds(5));
-        
+                
         // Write the second block
         session.write(part2.c_str(), part2.length());
     }
 }
 
 // Function to test rapid copy and destruction of SharedFileDescription across threads
-void registry_stress_worker(SharedFileDescription<FilePolicy> shared_desc) {
+void registry_stress_worker(SharedFileDescription<FilePolicy>& shared_desc, int thread_id) {
+    std::string thread_identity = "[Thread_" + std::to_string(thread_id) + "]";
     for (int i = 0; i < 500; ++i) {
         // Rapidly create and destroy copies to trigger heavy CAS loop contention in the registry
         SharedFileDescription<FilePolicy> temporary_copy = shared_desc;
+
+        auto session = shared_desc.lock();
+        std::string context = thread_identity + " : New shared fd access this file " //
+                + "- with i = " //
+                + std::to_string(i) + " with use_count = " //
+                + std::to_string(temporary_copy.use_count()) + "\n";
+
+        // Write the first block
+        session.write(context.c_str(), context.length());
+
         assert(temporary_copy.use_count() > 1);
     }
 }
@@ -106,7 +114,7 @@ int main() {
 
         std::cout << "-> Spawning " << num_threads << " threads for rapid reference counting stress...\n";
         for (int i = 0; i < num_threads; ++i) {
-            thread_pool.emplace_back(registry_stress_worker, shared_stress);
+            thread_pool.emplace_back(registry_stress_worker, std::ref(shared_stress), i);
         }
 
         for (auto& t : thread_pool) {
@@ -117,7 +125,7 @@ int main() {
         size_t final_count = shared_stress.use_count();
         std::cout << "-> Initial Count: " << initial_count << " | Final Count after high stress: " << final_count << "\n";
         assert(final_count == 1 && "Registry reference count leaked or drifted under heavy contention");
-        
+
         std::cout << "-> Static Registry Lock-Free CAS Consistency: PASSED\n\n";
     }
 

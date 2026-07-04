@@ -128,8 +128,8 @@ public:
     // Lock-free check for the current count, utilizing optimized memory ordering
     static size_t get_count(int fd) {
         for (const auto& slot : _registry) {
-            if (slot.fd.load(std::memory_order_relaxed) == fd) {
-                return slot.count.load(std::memory_order_relaxed);
+            if (slot.fd.load(std::memory_order_acq_rel) == fd) {
+                return slot.count.load(std::memory_order_acq_rel);
             }
         }
         return 0;
